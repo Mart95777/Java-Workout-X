@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.DefaultListModel;
@@ -41,6 +42,8 @@ public class JavaWorkoutX extends JFrame {
 	File topicsFile = null;
 	File usersFolder = null;
 	
+	String currentUser = null;
+	
 	
 	
 	@SuppressWarnings("resource")
@@ -55,6 +58,7 @@ public class JavaWorkoutX extends JFrame {
 		//
 		frame.checkForNewInstal(runningFolder);
 		OpenJWX frameOpenJWX = new OpenJWX(frame,runningFolder);
+		
 		
 		
 			
@@ -152,6 +156,7 @@ class OpenJWX extends JFrame {
 	JTextArea labelNewUser;
 	JTextArea textNewUser;
 	JButton userCreate;
+	JButton userOK;
 	
 	File newUserFolder = null;
 	
@@ -183,7 +188,7 @@ class OpenJWX extends JFrame {
 	 * CONSTRUCTOR!
 	 */
 	public OpenJWX(JavaWorkoutX frame, File runningFolder){
-		super("JAVA Workout Opening ...");
+		super("JAVA Workout Opening - Selecting User");
 		this.setSize(400,200);
 		this.setLocationRelativeTo(null);
 		
@@ -199,6 +204,9 @@ class OpenJWX extends JFrame {
 		mainPanel.setLayout(new GridBagLayout());
 		
 		textUserSelection = new JTextArea();
+		//textUserSelection.setLineWrap(true);
+		//textUserSelection.setWrapStyleWord(true);
+		//textUserSelection.setText("Select user: (This will close this dialog box)");
 		textUserSelection.setText("Select user: ");
 		textUserSelection.setEditable(false);
 		textUserSelection.setOpaque(false);
@@ -222,7 +230,10 @@ class OpenJWX extends JFrame {
 		userList = new JList();
 		userList.setModel(model);
 		JScrollPane jscrl = new JScrollPane(userList);
-		jscrl.setPreferredSize(new Dimension(200,120));
+		Dimension dim = new Dimension(200,120);
+		jscrl.setPreferredSize(dim);
+		userList.setPreferredSize(dim);
+		//jscrl.setPreferredSize(new Dimension(200,120));
 		//test 15 elements
 //		for (int i = 0; i < 15; i++)
 //		      model.addElement("Element " + i);
@@ -231,7 +242,6 @@ class OpenJWX extends JFrame {
 		str2.append(runningFolder.toString());
 		str2.append("\\data\\users\\");
 		try {
-			//newUserFolder = new File(str2.toString(),"data\\users\\"+textNewUser.getText());
 			usersFolders = new File(str2.toString()).listFiles();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -244,30 +254,10 @@ class OpenJWX extends JFrame {
 				str2.append(temp.getName().toString());
 				model.addElement(str2.toString());
 			}
-			}
+		}
 		
-		this.userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		addcomponent(mainPanel, jscrl, 0,1,1,6, GridBagConstraints.WEST, GridBagConstraints.NONE);
-		
-		userList.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent lsEvent) {
-				if (! lsEvent.getValueIsAdjusting())
-				{
-//					inifacsetX = facsets.get(userList.getSelectedIndex());
-//					StringBuilder strB1 = new StringBuilder("");
-//					//strB1 = "";
-//					for(int j=1;j<7;++j){
-//						strB1.append(inifacsetX.get(j));
-//						strB1.append("\n");
-//					}
-//					strB1.append(inifacsetX.get(7));
-//					ta4.setText(strB1.toString());
-					
-				}
-				
-			}
-		});
-		
 		
 		userCreate = new JButton("Create user");
 		userCreate.addActionListener(new ActionListener() {
@@ -285,7 +275,20 @@ class OpenJWX extends JFrame {
 		});
 		addcomponent(mainPanel, userCreate, 1,2,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
 		
+		userOK = new JButton("OK, Start Program");
+		userOK.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent evt) {
+				  // 
+				  frame.currentUser = userList.getSelectedValue().toString();
+				  //frame.textSelection.append(" "+frame.currentUser);
+				  dispose();
+			  }
+		});
+		addcomponent(mainPanel, userOK, 0,8,2,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
+		
+		
 		this.add(mainPanel);
+		this.pack();
 		this.setVisible(true);
 		// TESTING !!!!!!!!!!!!!!!!!!!!
 		//frame.appendTextSelection(" addition!");
