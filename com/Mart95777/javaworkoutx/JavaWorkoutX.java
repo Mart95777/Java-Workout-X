@@ -59,10 +59,6 @@ public class JavaWorkoutX extends JFrame {
 		frame.checkForNewInstal(runningFolder);
 		OpenJWX frameOpenJWX = new OpenJWX(frame,runningFolder);
 		
-		
-		
-			
-
 	}
 	/**
 	 * ACCESSORS
@@ -160,8 +156,8 @@ class OpenJWX extends JFrame {
 	
 	File newUserFolder = null;
 	
-	DefaultListModel model;
-	JList userList;
+	DefaultListModel<String> model;
+	JList<String> userList;
 	
 	
 	/**
@@ -188,8 +184,8 @@ class OpenJWX extends JFrame {
 	 * CONSTRUCTOR!
 	 */
 	public OpenJWX(JavaWorkoutX frame, File runningFolder){
-		super("JAVA Workout Opening - Selecting User");
-		this.setSize(400,200);
+		super("JAVA Workout - Selecting User");
+		this.setSize(450,200);
 		this.setLocationRelativeTo(null);
 		
 		boolean success;
@@ -226,8 +222,8 @@ class OpenJWX extends JFrame {
 		textNewUser.setOpaque(true);
 		addcomponent(mainPanel, textNewUser, 1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
 		
-		model = new DefaultListModel();
-		userList = new JList();
+		model = new DefaultListModel<>();
+		userList = new JList<>();
 		userList.setModel(model);
 		JScrollPane jscrl = new JScrollPane(userList);
 		Dimension dim = new Dimension(200,120);
@@ -241,20 +237,8 @@ class OpenJWX extends JFrame {
 		str2.setLength(0);
 		str2.append(runningFolder.toString());
 		str2.append("\\data\\users\\");
-		try {
-			usersFolders = new File(str2.toString()).listFiles();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "Problem with listing user Folders files");
-			e.printStackTrace();
-		}
-		for (File temp : usersFolders){
-			if(temp.isDirectory()){
-				str2.setLength(0);
-				str2.append(temp.getName().toString());
-				model.addElement(str2.toString());
-			}
-		}
+		
+		listFoldersOfUsers(usersFolders,model,str2.toString());
 		
 		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		addcomponent(mainPanel, jscrl, 0,1,1,6, GridBagConstraints.WEST, GridBagConstraints.NONE);
@@ -271,6 +255,10 @@ class OpenJWX extends JFrame {
 				  newUserFolder = new File(str2.toString(),"data\\users\\"+textNewUser.getText());
 				  success = newUserFolder.mkdir();
 				  JOptionPane.showMessageDialog(null, "success(new users folder created): "+success);
+				  str2.setLength(0);
+				  str2.append(runningFolder.toString());
+				  str2.append("\\data\\users\\");
+				  listFoldersOfUsers(usersFolders,model,str2.toString());
 			  }
 		});
 		addcomponent(mainPanel, userCreate, 1,2,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
@@ -294,6 +282,28 @@ class OpenJWX extends JFrame {
 		//frame.appendTextSelection(" addition!");
 		
 	
+	}//end of Constructor OpenJWX
+	
+	/**
+	 * Other methods of OpenJWX
+	 */
+	private void listFoldersOfUsers(File[] usersFolders, DefaultListModel<String> model,String str){
+		StringBuilder str2 = new StringBuilder("");
+		model.clear();
+		try {
+			usersFolders = new File(str).listFiles();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, "Problem with listing user Folders files");
+			e.printStackTrace();
+		}
+		for (File temp : usersFolders){
+			if(temp.isDirectory()){
+				str2.setLength(0);
+				str2.append(temp.getName().toString());
+				model.addElement(str2.toString());
+			}
+		}
 	}
 	
 	
