@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -22,6 +23,17 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Entity;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * @author marcin
@@ -58,6 +70,7 @@ public class JavaWorkoutX extends JFrame {
 		//
 		frame.checkForNewInstal(runningFolder);
 		OpenJWX frameOpenJWX = new OpenJWX(frame,runningFolder);
+		
 		
 	}
 	/**
@@ -266,10 +279,14 @@ class OpenJWX extends JFrame {
 		userOK = new JButton("OK, Start Program");
 		userOK.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent evt) {
-				  // 
-				  frame.currentUser = userList.getSelectedValue().toString();
-				  //frame.textSelection.append(" "+frame.currentUser);
-				  dispose();
+				// 
+				frame.currentUser = userList.getSelectedValue().toString();
+				//frame.textSelection.append(" "+frame.currentUser);
+				// dealing with user
+				String s = frame.currentUser;
+				// parsing xml
+				DOMparseJWX parser1 = new DOMparseJWX(frame, runningFolder, s);
+				dispose();
 			  }
 		});
 		addcomponent(mainPanel, userOK, 0,8,2,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
@@ -308,3 +325,156 @@ class OpenJWX extends JFrame {
 	
 	
 }
+
+class DOMparseJWX {
+	
+	
+	public DOMparseJWX(JavaWorkoutX frame, File runningFolder, String currentUser){
+		StringBuilder str2 = new StringBuilder();
+		File topicsFile = null;
+		
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	try {
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		//
+		str2.setLength(0);
+		str2.append(runningFolder.toString());
+		//str2.append("\\data\\users\\"+currentUser+"\\topics.xml"); 
+		
+		topicsFile = new File(str2.toString(),"\\data\\users\\"+currentUser+"\\topics.xml");
+		//JOptionPane.showMessageDialog(null, topicsFile.toString());
+		if(!topicsFile.exists()){
+			JOptionPane.showMessageDialog(null, "no topics.xml in this user folder");
+			System.exit(0);
+		}
+//		if(topicsFile.exists()){
+//			JOptionPane.showMessageDialog(null, "topics.xml found!");
+//		}
+		//
+		Document document = builder.parse(topicsFile);
+		
+		NodeList nodeList = document.getDocumentElement().getChildNodes();
+		for (int i = 0; i < nodeList.getLength(); i++) {
+
+			Node node = nodeList.item(i);
+
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element elem = (Element) node;
+				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
+				echo(node);
+				
+
+
+			}
+		}// for
+		
+		
+		
+		
+	} catch (ParserConfigurationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (SAXException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+		
+	}// end constructor
+	
+	/**
+	 *  Methods
+	 *  echo - this method from example Oracle - testing
+	 */
+	private void echo(Node n) {
+	    int type = n.getNodeType();
+
+	    switch (type) {
+	        case Node.ATTRIBUTE_NODE:
+	            System.out.print("ATTR:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.CDATA_SECTION_NODE:
+	            System.out.print("CDATA:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.COMMENT_NODE:
+	            System.out.print("COMM:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.DOCUMENT_FRAGMENT_NODE:
+	            System.out.print("DOC_FRAG:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.DOCUMENT_NODE:
+	            System.out.print("DOC:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.DOCUMENT_TYPE_NODE:
+	            System.out.print("DOC_TYPE:");
+	            System.out.println(n);
+//	            NamedNodeMap nodeMap = ((DocumentType)n).getEntities();
+//	            for (int i = 0; i < nodeMap.getLength(); i++) {
+//	                Entity entity = (Entity)nodeMap.item(i);
+//	                echo(entity);
+//	            }
+	            break;
+
+	        case Node.ELEMENT_NODE:
+	            System.out.print("ELEM:");
+	            System.out.println(n);
+
+	            NamedNodeMap atts = n.getAttributes();
+	            for (int i = 0; i < atts.getLength(); i++) {
+	                Node att = atts.item(i);
+	                echo(att);
+	            }
+	            break;
+
+	        case Node.ENTITY_NODE:
+	            System.out.print("ENT:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.ENTITY_REFERENCE_NODE:
+	            System.out.print("ENT_REF:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.NOTATION_NODE:
+	            System.out.print("NOTATION:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.PROCESSING_INSTRUCTION_NODE:
+	            System.out.print("PROC_INST:");
+	            System.out.println(n);
+	            break;
+
+	        case Node.TEXT_NODE:
+	            System.out.print("TEXT:");
+	            System.out.println(n);
+	            break;
+
+	        default:
+	            System.out.print("UNSUPPORTED NODE: " + type);
+	            System.out.println(n);
+	            break;
+	    }
+
+	    for (Node child = n.getFirstChild(); child != null;
+	         child = child.getNextSibling()) {
+	        echo(child);
+	    }
+	}// end of echo
+	
+}//end class DOMparseJWX
