@@ -334,6 +334,9 @@ class DOMparseJWX {
 		File topicsFile = null;
 		
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	//factory.setIgnoringElementContentWhitespace(true);
+	//factory.setSchema(schema);
+	//factory.setNamespaceAware(true);
 	try {
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		//
@@ -352,23 +355,46 @@ class DOMparseJWX {
 //		}
 		//
 		Document document = builder.parse(topicsFile);
-		
+		document.getDocumentElement().normalize();
+		System.out.println("Doctype: "+document.getDoctype());
+		System.out.println("Root element: " + document.getDocumentElement().getNodeName());
+		System.out.println("We are in root element now...");
+		//NodeList nList = document.getElementsByTagName("exercise");
+		Element element = document.getDocumentElement();
+		System.out.println("element: "+element);
 		NodeList nodeList = document.getDocumentElement().getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
+			System.out.println("Item "+i+": "+nodeList.item(i));
 
-			Node node = nodeList.item(i);
-
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element elem = (Element) node;
-				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
-				echo(node);
-				
-
-
-			}
+//			Node node = nodeList.item(i);
+//
+//			if (node.getNodeType() == Node.ELEMENT_NODE) {
+//				//Element elem = (Element) node;
+//				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
+//				//echo(node);
+//			}
 		}// for
+		// checking other Document stuff
+		Node node = nodeList.item(0);
+		System.out.println("Checking the first node...");
+		System.out.println("Local Name: "+node.getLocalName());
+		System.out.println("Node Name: "+node.getNodeName());
+		System.out.println("Node Type: "+node.getNodeType());
+		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+		// ... and so on, this is just newline
+		// node i=1
+		node = nodeList.item(1);
+		System.out.println("Checking the node i=1...");
+		System.out.println("Local Name: "+node.getLocalName());
+		System.out.println("Node Name: "+node.getNodeName());
+		System.out.println("Node Type: "+node.getNodeType());
+		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+		System.out.println("Node Owner doc: "+node.getOwnerDocument());
+		System.out.println("Node Parent Node: "+node.getParentNode());
 		
-		
+		// checking null response
+		System.out.println("Checking null response...");
+		if (node.getNodeValue()==null) System.out.println("Null detected, which is as it is");
 		
 		
 	} catch (ParserConfigurationException e) {
@@ -394,40 +420,40 @@ class DOMparseJWX {
 	    int type = n.getNodeType();
 
 	    switch (type) {
-	        case Node.ATTRIBUTE_NODE:
-	            System.out.print("ATTR:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.CDATA_SECTION_NODE:
-	            System.out.print("CDATA:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.COMMENT_NODE:
-	            System.out.print("COMM:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.DOCUMENT_FRAGMENT_NODE:
-	            System.out.print("DOC_FRAG:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.DOCUMENT_NODE:
-	            System.out.print("DOC:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.DOCUMENT_TYPE_NODE:
-	            System.out.print("DOC_TYPE:");
-	            System.out.println(n);
-//	            NamedNodeMap nodeMap = ((DocumentType)n).getEntities();
-//	            for (int i = 0; i < nodeMap.getLength(); i++) {
-//	                Entity entity = (Entity)nodeMap.item(i);
-//	                echo(entity);
-//	            }
-	            break;
+//	        case Node.ATTRIBUTE_NODE:
+//	            System.out.print("ATTR:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.CDATA_SECTION_NODE:
+//	            System.out.print("CDATA:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.COMMENT_NODE:
+//	            System.out.print("COMM:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.DOCUMENT_FRAGMENT_NODE:
+//	            System.out.print("DOC_FRAG:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.DOCUMENT_NODE:
+//	            System.out.print("DOC:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.DOCUMENT_TYPE_NODE:
+//	            System.out.print("DOC_TYPE:");
+//	            System.out.println(n);
+////	            NamedNodeMap nodeMap = ((DocumentType)n).getEntities();
+////	            for (int i = 0; i < nodeMap.getLength(); i++) {
+////	                Entity entity = (Entity)nodeMap.item(i);
+////	                echo(entity);
+////	            }
+//	            break;
 
 	        case Node.ELEMENT_NODE:
 	            System.out.print("ELEM:");
@@ -440,29 +466,30 @@ class DOMparseJWX {
 	            }
 	            break;
 
-	        case Node.ENTITY_NODE:
-	            System.out.print("ENT:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.ENTITY_REFERENCE_NODE:
-	            System.out.print("ENT_REF:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.NOTATION_NODE:
-	            System.out.print("NOTATION:");
-	            System.out.println(n);
-	            break;
-
-	        case Node.PROCESSING_INSTRUCTION_NODE:
-	            System.out.print("PROC_INST:");
-	            System.out.println(n);
-	            break;
+//	        case Node.ENTITY_NODE:
+//	            System.out.print("ENT:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.ENTITY_REFERENCE_NODE:
+//	            System.out.print("ENT_REF:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.NOTATION_NODE:
+//	            System.out.print("NOTATION:");
+//	            System.out.println(n);
+//	            break;
+//
+//	        case Node.PROCESSING_INSTRUCTION_NODE:
+//	            System.out.print("PROC_INST:");
+//	            System.out.println(n);
+//	            break;
 
 	        case Node.TEXT_NODE:
 	            System.out.print("TEXT:");
-	            System.out.println(n);
+	            //System.out.println(n);
+	            System.out.println("\""+n+"\"");
 	            break;
 
 	        default:
