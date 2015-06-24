@@ -26,6 +26,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -356,45 +362,147 @@ class DOMparseJWX {
 		//
 		Document document = builder.parse(topicsFile);
 		document.getDocumentElement().normalize();
-		System.out.println("Doctype: "+document.getDoctype());
+		//System.out.println("Doctype: "+document.getDoctype());
 		System.out.println("Root element: " + document.getDocumentElement().getNodeName());
 		System.out.println("We are in root element now...");
-		//NodeList nList = document.getElementsByTagName("exercise");
-		Element element = document.getDocumentElement();
-		System.out.println("element: "+element);
-		NodeList nodeList = document.getDocumentElement().getChildNodes();
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			System.out.println("Item "+i+": "+nodeList.item(i));
-
+		
+		int indent = 1;
+		//Element element = null;
+		//element = document.getDocumentElement();
+//		Node n = (Node)document.getDocumentElement();
+//		System.out.println("element: "+n);
+//		nodePrint(n,indent);
+		
+		// by tag name
+		NodeList n1 = document.getElementsByTagName("exercise");
+		System.out.println("element: "+n1);
+		//nodePrint(n1,indent);
+		for (int i=0, len=n1.getLength();i<len;++i){
+			
+			Node node = n1.item(i);
+			System.out.println("---"+i);
+			System.out.println("Local Name: "+node.getLocalName());
+			System.out.println("Node Name: "+node.getNodeName());
+			System.out.println("Node Type: "+node.getNodeType());
+			System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+			System.out.println("Node Owner doc: "+node.getOwnerDocument());
+			System.out.println("Node Parent Node: "+node.getParentNode());
+			
+		}
+		
+		
+		
+		// SAVING ======================================================
+		// write the content into xml file
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(document);
+		StreamResult result = new StreamResult(new File("file.xml"));
+ 
+		// Output to console for testing
+		// StreamResult result = new StreamResult(System.out);
+ 
+		transformer.transform(source, result);
+ 
+		System.out.println("File saved!");
+		
+		
+		
+		
+		
+		
+		
+//		NodeList nodeList = document.getDocumentElement().getChildNodes();
+//		for (int i = 0; i < nodeList.getLength(); i++) {
+//			System.out.println("Item "+i+": "+nodeList.item(i));
+//
 //			Node node = nodeList.item(i);
 //
-//			if (node.getNodeType() == Node.ELEMENT_NODE) {
-//				//Element elem = (Element) node;
-//				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
-//				//echo(node);
-//			}
-		}// for
-		// checking other Document stuff
-		Node node = nodeList.item(0);
-		System.out.println("Checking the first node...");
-		System.out.println("Local Name: "+node.getLocalName());
-		System.out.println("Node Name: "+node.getNodeName());
-		System.out.println("Node Type: "+node.getNodeType());
-		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
-		// ... and so on, this is just newline
-		// node i=1
-		node = nodeList.item(1);
-		System.out.println("Checking the node i=1...");
-		System.out.println("Local Name: "+node.getLocalName());
-		System.out.println("Node Name: "+node.getNodeName());
-		System.out.println("Node Type: "+node.getNodeType());
-		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
-		System.out.println("Node Owner doc: "+node.getOwnerDocument());
-		System.out.println("Node Parent Node: "+node.getParentNode());
+////			if (node.getNodeType() == Node.ELEMENT_NODE) {
+////				System.out.print("ELEM:");
+////	            System.out.println(node);
+////				//Element elem = (Element) node;
+////				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
+////				//echo(node);
+////			}
+//			
+//			//if (node.getNodeType() == Node.ELEMENT_NODE) {
+//				System.out.print("ELEM:");
+//	            //System.out.println(node);
+//	            
+//	            if (node.getNodeValue().equals("\n")){
+//	    			System.out.println("newline");
+//	    		}else{
+//	    			System.out.println(node);
+//	    		}
+//
+//			//}
+//		}// for
 		
-		// checking null response
-		System.out.println("Checking null response...");
-		if (node.getNodeValue()==null) System.out.println("Null detected, which is as it is");
+		
+		
+		
+		
+//		//NodeList nList = document.getElementsByTagName("exercise");
+//		
+//		System.out.println("element: "+element);
+//		NodeList nodeList = document.getDocumentElement().getChildNodes();
+//		for (int i = 0; i < nodeList.getLength(); i++) {
+//			System.out.println("Item "+i+": "+nodeList.item(i));
+//
+////			Node node = nodeList.item(i);
+////
+////			if (node.getNodeType() == Node.ELEMENT_NODE) {
+////				//Element elem = (Element) node;
+////				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
+////				//echo(node);
+////			}
+//		}// for
+//		// checking other Document stuff
+//		Node node = nodeList.item(0);
+//		System.out.println("Checking the first node...");
+//		System.out.println("Local Name: "+node.getLocalName());
+//		System.out.println("Node Name: "+node.getNodeName());
+//		System.out.println("Node Type: "+node.getNodeType());
+//		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+//		NodeList nodeList1 = node.getChildNodes();
+//		System.out.println("Node children: "+nodeList1.getLength());
+//		
+//		// ... and so on, this is just newline
+//		// node i=1
+//		node = nodeList.item(1);
+//		System.out.println("Checking the node i=1...");
+//		System.out.println("Local Name: "+node.getLocalName());
+//		System.out.println("Node Name: "+node.getNodeName());
+//		System.out.println("Node Type: "+node.getNodeType());
+//		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+//		System.out.println("Node Owner doc: "+node.getOwnerDocument());
+//		System.out.println("Node Parent Node: "+node.getParentNode());
+//		nodeList1 = node.getChildNodes();
+//		System.out.println("Node children: "+nodeList1.getLength());
+//		// loop over all children nodes
+//		for (int i=0, len=nodeList1.getLength();i<len;++i){
+//			
+//			node = nodeList1.item(i);
+//			System.out.println("---"+i);
+//			System.out.println("Local Name: "+node.getLocalName());
+//			System.out.println("Node Name: "+node.getNodeName());
+//			System.out.println("Node Type: "+node.getNodeType());
+//			System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+//			System.out.println("Node Owner doc: "+node.getOwnerDocument());
+//			System.out.println("Node Parent Node: "+node.getParentNode());
+//			
+//		}
+//		
+//		
+//		// checking null response
+//		System.out.println("Checking null response...");
+//		if (node.getNodeValue()==null){
+//			System.out.println("Null detected, which is as it is");
+//		}
+//		else{
+//			System.out.println("Null not, value: \""+node.getNodeValue()+"\"");
+//		}
 		
 		
 	} catch (ParserConfigurationException e) {
@@ -404,6 +512,12 @@ class DOMparseJWX {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (TransformerConfigurationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (TransformerException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
@@ -503,5 +617,23 @@ class DOMparseJWX {
 	        echo(child);
 	    }
 	}// end of echo
+	
+	private void nodePrint(Node n,int indent){
+		for (int i = 0; i< indent; ++i){
+			System.out.print("  ");
+		}
+//		if (n.getNodeValue().equals("\n")){
+//			System.out.println("newline");
+//		}else{
+			System.out.println("element: "+n);
+//		}
+		
+		NodeList nL = n.getChildNodes();
+		++indent;
+		for (int i=0, len=nL.getLength();i<len;++i){
+			nodePrint(nL.item(i),indent);
+		}
+		--indent;
+	}
 	
 }//end class DOMparseJWX
