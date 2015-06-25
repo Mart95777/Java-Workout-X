@@ -61,7 +61,9 @@ public class JavaWorkoutX extends JFrame {
 	File usersFolder = null;
 	
 	String currentUser = null;
-	
+	// document current for the user, gets parsed in DOMparser class
+	Document document = null;
+			//new Document();
 	
 	
 	@SuppressWarnings("resource")
@@ -73,9 +75,17 @@ public class JavaWorkoutX extends JFrame {
 		str1.append(new File(".").getAbsolutePath());
 		File runningFolder = null;
 		runningFolder = new File(str1.toString()).getParentFile();
+		// 
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//
-		frame.checkForNewInstal(runningFolder);
-		OpenJWX frameOpenJWX = new OpenJWX(frame,runningFolder);
+		frame.checkForNewInstal(frame, runningFolder);
+		OpenJWX frameOpenJWX = new OpenJWX(frame.document, frame,runningFolder);
 		
 		
 	}
@@ -135,7 +145,7 @@ public class JavaWorkoutX extends JFrame {
 	 * - if code files with examples are in place
 	 * - ...
 	 */
-	private void checkForNewInstal(File runningFolder){
+	private void checkForNewInstal(JavaWorkoutX frame, File runningFolder){
 		//...
 		boolean success;
 		StringBuilder str2 = new StringBuilder();
@@ -145,386 +155,179 @@ public class JavaWorkoutX extends JFrame {
 		str2.append('\\');
 
 		// checking if data folder exists
-		dataFolder = new File(str2.toString(),"data");
+		frame.dataFolder = new File(str2.toString(),"data");
 		success = dataFolder.mkdir();
 		//JOptionPane.showMessageDialog(null, "success: "+success);
 		//JOptionPane.showMessageDialog(null, "File dataFolder: "+ dataFolder.toString());
 		//
-		topicsFile = new File(str2.toString(),"data\\topics.xml");
-		if(!topicsFile.exists()){
+		frame.topicsFile = new File(str2.toString(),"data\\topics.xml");
+		if(!frame.topicsFile.exists()){
 			JOptionPane.showMessageDialog(null, "topics.xml file not found\nPlease, place the 'topics.xml' file in 'data' folder\nQuiting...");
 			System.exit(0);
 		}
 		//
-		usersFolder = new File(str2.toString(),"data\\users");
-		success = usersFolder.mkdir();
+		frame.usersFolder = new File(str2.toString(),"data\\users");
+		success = frame.usersFolder.mkdir();
 		//JOptionPane.showMessageDialog(null, "success(users folder): "+success);
 		//
 		
 	}
-
-}
-
-class OpenJWX extends JFrame {
-	JPanel mainPanel;
-	JTextArea textUserSelection;
-	JTextArea labelNewUser;
-	JTextArea textNewUser;
-	JButton userCreate;
-	JButton userOK;
 	
-	File newUserFolder = null;
-	
-	DefaultListModel<String> model;
-	JList<String> userList;
-	
-	
-	/**
-	 * Methods for the constructor - OpenJWX
-	 */
-	
-	private void addcomponent(JPanel pn, JComponent cmp, int xpos, int ypos, int w, int h, int place, int stretch){
-		GridBagConstraints gridcns = new GridBagConstraints();
-		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
-		gridcns.gridx = xpos;
-		gridcns.gridy = ypos;
-		gridcns.gridwidth = w;
-		gridcns.gridheight = h;
-		gridcns.weightx = 100;
-		gridcns.weighty = 100;
-		gridcns.insets = new Insets(5,5,5,5);
-		gridcns.anchor = place;
-		gridcns.fill = stretch;
+	private void docChecker(Document document){
+		// ADDITIONAL TERSTS !!!!!!!!!!!!!!
 		
-		pn.add(cmp, gridcns);
-	} // end private void addcomponent
-	
-	/**
-	 * CONSTRUCTOR!
-	 */
-	public OpenJWX(JavaWorkoutX frame, File runningFolder){
-		super("JAVA Workout - Selecting User");
-		this.setSize(450,200);
-		this.setLocationRelativeTo(null);
-		
-		boolean success;
-		File[] usersFolders = null;
-		
-		StringBuilder str2 = new StringBuilder();
-		//StringBuilder str1 = new StringBuilder();
+				document.getDocumentElement().normalize();
+				//System.out.println("Doctype: "+document.getDoctype());
+				System.out.println("Root element: " + document.getDocumentElement().getNodeName());
+				System.out.println("We are in root element now...");
+				
+				int indent = 1;
+				//Element element = null;
+				//element = document.getDocumentElement();
+				Node n = (Node)document.getDocumentElement();
+				System.out.println("element: "+n);
+				nodePrint(n,indent);
+				
+				// by tag name
+				NodeList n1 = document.getElementsByTagName("exercise");
+				System.out.println("element: "+n1);
+				//nodePrint(n1,indent);
+				for (int i=0, len=n1.getLength();i<len;++i){
 					
-		
-		
-		mainPanel = new JPanel();
-		mainPanel.setLayout(new GridBagLayout());
-		
-		textUserSelection = new JTextArea();
-		//textUserSelection.setLineWrap(true);
-		//textUserSelection.setWrapStyleWord(true);
-		//textUserSelection.setText("Select user: (This will close this dialog box)");
-		textUserSelection.setText("Select user: ");
-		textUserSelection.setEditable(false);
-		textUserSelection.setOpaque(false);
-		addcomponent(mainPanel, textUserSelection, 0,0,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
-		
-		labelNewUser = new JTextArea();
-		labelNewUser.setText("New user: ");
-		labelNewUser.setEditable(false);
-		labelNewUser.setOpaque(false);
-		addcomponent(mainPanel, labelNewUser, 1,0,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
-		
-		textNewUser = new JTextArea();
-		textNewUser.setBackground(new Color(255,255,255));
-		textNewUser.setPreferredSize(new Dimension(150,17));
-		//textNewUser.setText("...");
-		textNewUser.setEditable(true);
-		textNewUser.setOpaque(true);
-		addcomponent(mainPanel, textNewUser, 1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
-		
-		model = new DefaultListModel<>();
-		userList = new JList<>();
-		userList.setModel(model);
-		JScrollPane jscrl = new JScrollPane(userList);
-		Dimension dim = new Dimension(200,120);
-		jscrl.setPreferredSize(dim);
-		userList.setPreferredSize(dim);
-		//jscrl.setPreferredSize(new Dimension(200,120));
-		//test 15 elements
-//		for (int i = 0; i < 15; i++)
-//		      model.addElement("Element " + i);
-		// Finding all folders with users
-		str2.setLength(0);
-		str2.append(runningFolder.toString());
-		str2.append("\\data\\users\\");
-		
-		listFoldersOfUsers(usersFolders,model,str2.toString());
-		
-		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		addcomponent(mainPanel, jscrl, 0,1,1,6, GridBagConstraints.WEST, GridBagConstraints.NONE);
-		
-		userCreate = new JButton("Create user");
-		userCreate.addActionListener(new ActionListener() {
-			  public void actionPerformed(ActionEvent evt) {
-				  // 
-				  boolean success;
-				  
-				  str2.setLength(0);
-				  str2.append(runningFolder.toString());
-				  str2.append('\\');
-				  newUserFolder = new File(str2.toString(),"data\\users\\"+textNewUser.getText());
-				  success = newUserFolder.mkdir();
-				  JOptionPane.showMessageDialog(null, "success(new users folder created): "+success);
-				  str2.setLength(0);
-				  str2.append(runningFolder.toString());
-				  str2.append("\\data\\users\\");
-				  listFoldersOfUsers(usersFolders,model,str2.toString());
-			  }
-		});
-		addcomponent(mainPanel, userCreate, 1,2,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
-		
-		userOK = new JButton("OK, Start Program");
-		userOK.addActionListener(new ActionListener() {
-			  public void actionPerformed(ActionEvent evt) {
-				// 
-				frame.currentUser = userList.getSelectedValue().toString();
-				//frame.textSelection.append(" "+frame.currentUser);
-				// dealing with user
-				String s = frame.currentUser;
-				// parsing xml
-				DOMparseJWX parser1 = new DOMparseJWX(frame, runningFolder, s);
-				dispose();
-			  }
-		});
-		addcomponent(mainPanel, userOK, 0,8,2,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
-		
-		
-		this.add(mainPanel);
-		this.pack();
-		this.setVisible(true);
-		// TESTING !!!!!!!!!!!!!!!!!!!!
-		//frame.appendTextSelection(" addition!");
-		
-	
-	}//end of Constructor OpenJWX
-	
-	/**
-	 * Other methods of OpenJWX
-	 */
-	private void listFoldersOfUsers(File[] usersFolders, DefaultListModel<String> model,String str){
-		StringBuilder str2 = new StringBuilder("");
-		model.clear();
-		try {
-			usersFolders = new File(str).listFiles();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "Problem with listing user Folders files");
-			e.printStackTrace();
-		}
-		for (File temp : usersFolders){
-			if(temp.isDirectory()){
-				str2.setLength(0);
-				str2.append(temp.getName().toString());
-				model.addElement(str2.toString());
-			}
-		}
-	}
-	
-	
-}
+					Node node = n1.item(i);
+					System.out.println("---"+i);
+					System.out.println("Local Name: "+node.getLocalName());
+					System.out.println("Node Name: "+node.getNodeName());
+					System.out.println("Node Type: "+node.getNodeType());
+					System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+					System.out.println("Node Owner doc: "+node.getOwnerDocument());
+					System.out.println("Node Parent Node: "+node.getParentNode());
+					
+				}
+				
+				
+				
+				// SAVING ======================================================
+				// write the content into xml file
+				TransformerFactory transformerFactory = TransformerFactory.newInstance();
+				Transformer transformer;
+				DOMSource source = new DOMSource(document);
+				StreamResult result = new StreamResult(new File("file.xml"));
+				try {
+					transformer = transformerFactory.newTransformer();
+					transformer.transform(source, result);
+				} catch (TransformerConfigurationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (TransformerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+		 
+				// Output to console for testing
+				// StreamResult result = new StreamResult(System.out);
 
-class DOMparseJWX {
-	
-	
-	public DOMparseJWX(JavaWorkoutX frame, File runningFolder, String currentUser){
-		StringBuilder str2 = new StringBuilder();
-		File topicsFile = null;
-		
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	//factory.setIgnoringElementContentWhitespace(true);
-	//factory.setSchema(schema);
-	//factory.setNamespaceAware(true);
-	try {
-		DocumentBuilder builder = factory.newDocumentBuilder();
+				System.out.println("File \"file.xml\" saved!");
+				
+				
+				
+				
+				
+				
+				
+//				NodeList nodeList = document.getDocumentElement().getChildNodes();
+//				for (int i = 0; i < nodeList.getLength(); i++) {
+//					System.out.println("Item "+i+": "+nodeList.item(i));
 		//
-		str2.setLength(0);
-		str2.append(runningFolder.toString());
-		//str2.append("\\data\\users\\"+currentUser+"\\topics.xml"); 
-		
-		topicsFile = new File(str2.toString(),"\\data\\users\\"+currentUser+"\\topics.xml");
-		//JOptionPane.showMessageDialog(null, topicsFile.toString());
-		if(!topicsFile.exists()){
-			JOptionPane.showMessageDialog(null, "no topics.xml in this user folder");
-			System.exit(0);
-		}
-//		if(topicsFile.exists()){
-//			JOptionPane.showMessageDialog(null, "topics.xml found!");
-//		}
+//					Node node = nodeList.item(i);
 		//
-		Document document = builder.parse(topicsFile);
-		document.getDocumentElement().normalize();
-		//System.out.println("Doctype: "+document.getDoctype());
-		System.out.println("Root element: " + document.getDocumentElement().getNodeName());
-		System.out.println("We are in root element now...");
-		
-		int indent = 1;
-		//Element element = null;
-		//element = document.getDocumentElement();
-//		Node n = (Node)document.getDocumentElement();
-//		System.out.println("element: "+n);
-//		nodePrint(n,indent);
-		
-		// by tag name
-		NodeList n1 = document.getElementsByTagName("exercise");
-		System.out.println("element: "+n1);
-		//nodePrint(n1,indent);
-		for (int i=0, len=n1.getLength();i<len;++i){
-			
-			Node node = n1.item(i);
-			System.out.println("---"+i);
-			System.out.println("Local Name: "+node.getLocalName());
-			System.out.println("Node Name: "+node.getNodeName());
-			System.out.println("Node Type: "+node.getNodeType());
-			System.out.println("Node Value: \""+node.getNodeValue()+"\"");
-			System.out.println("Node Owner doc: "+node.getOwnerDocument());
-			System.out.println("Node Parent Node: "+node.getParentNode());
-			
-		}
-		
-		
-		
-		// SAVING ======================================================
-		// write the content into xml file
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(document);
-		StreamResult result = new StreamResult(new File("file.xml"));
- 
-		// Output to console for testing
-		// StreamResult result = new StreamResult(System.out);
- 
-		transformer.transform(source, result);
- 
-		System.out.println("File saved!");
-		
-		
-		
-		
-		
-		
-		
-//		NodeList nodeList = document.getDocumentElement().getChildNodes();
-//		for (int i = 0; i < nodeList.getLength(); i++) {
-//			System.out.println("Item "+i+": "+nodeList.item(i));
-//
-//			Node node = nodeList.item(i);
-//
-////			if (node.getNodeType() == Node.ELEMENT_NODE) {
-////				System.out.print("ELEM:");
-////	            System.out.println(node);
-////				//Element elem = (Element) node;
-////				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
-////				//echo(node);
-////			}
-//			
-//			//if (node.getNodeType() == Node.ELEMENT_NODE) {
-//				System.out.print("ELEM:");
-//	            //System.out.println(node);
-//	            
-//	            if (node.getNodeValue().equals("\n")){
-//	    			System.out.println("newline");
-//	    		}else{
-//	    			System.out.println(node);
-//	    		}
-//
-//			//}
-//		}// for
-		
-		
-		
-		
-		
-//		//NodeList nList = document.getElementsByTagName("exercise");
-//		
-//		System.out.println("element: "+element);
-//		NodeList nodeList = document.getDocumentElement().getChildNodes();
-//		for (int i = 0; i < nodeList.getLength(); i++) {
-//			System.out.println("Item "+i+": "+nodeList.item(i));
-//
-////			Node node = nodeList.item(i);
-////
-////			if (node.getNodeType() == Node.ELEMENT_NODE) {
-////				//Element elem = (Element) node;
-////				//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
-////				//echo(node);
-////			}
-//		}// for
-//		// checking other Document stuff
-//		Node node = nodeList.item(0);
-//		System.out.println("Checking the first node...");
-//		System.out.println("Local Name: "+node.getLocalName());
-//		System.out.println("Node Name: "+node.getNodeName());
-//		System.out.println("Node Type: "+node.getNodeType());
-//		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
-//		NodeList nodeList1 = node.getChildNodes();
-//		System.out.println("Node children: "+nodeList1.getLength());
-//		
-//		// ... and so on, this is just newline
-//		// node i=1
-//		node = nodeList.item(1);
-//		System.out.println("Checking the node i=1...");
-//		System.out.println("Local Name: "+node.getLocalName());
-//		System.out.println("Node Name: "+node.getNodeName());
-//		System.out.println("Node Type: "+node.getNodeType());
-//		System.out.println("Node Value: \""+node.getNodeValue()+"\"");
-//		System.out.println("Node Owner doc: "+node.getOwnerDocument());
-//		System.out.println("Node Parent Node: "+node.getParentNode());
-//		nodeList1 = node.getChildNodes();
-//		System.out.println("Node children: "+nodeList1.getLength());
-//		// loop over all children nodes
-//		for (int i=0, len=nodeList1.getLength();i<len;++i){
-//			
-//			node = nodeList1.item(i);
-//			System.out.println("---"+i);
-//			System.out.println("Local Name: "+node.getLocalName());
-//			System.out.println("Node Name: "+node.getNodeName());
-//			System.out.println("Node Type: "+node.getNodeType());
-//			System.out.println("Node Value: \""+node.getNodeValue()+"\"");
-//			System.out.println("Node Owner doc: "+node.getOwnerDocument());
-//			System.out.println("Node Parent Node: "+node.getParentNode());
-//			
-//		}
-//		
-//		
-//		// checking null response
-//		System.out.println("Checking null response...");
-//		if (node.getNodeValue()==null){
-//			System.out.println("Null detected, which is as it is");
-//		}
-//		else{
-//			System.out.println("Null not, value: \""+node.getNodeValue()+"\"");
-//		}
-		
-		
-	} catch (ParserConfigurationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (SAXException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (TransformerConfigurationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (TransformerException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	
-	
-		
-	}// end constructor
+////					if (node.getNodeType() == Node.ELEMENT_NODE) {
+////						System.out.print("ELEM:");
+////			            System.out.println(node);
+////						//Element elem = (Element) node;
+////						//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
+////						//echo(node);
+////					}
+//					
+//					//if (node.getNodeType() == Node.ELEMENT_NODE) {
+//						System.out.print("ELEM:");
+//			            //System.out.println(node);
+//			            
+//			            if (node.getNodeValue().equals("\n")){
+//			    			System.out.println("newline");
+//			    		}else{
+//			    			System.out.println(node);
+//			    		}
+		//
+//					//}
+//				}// for
+				
+				
+				
+				
+				
+//				//NodeList nList = document.getElementsByTagName("exercise");
+//				
+//				System.out.println("element: "+element);
+//				NodeList nodeList = document.getDocumentElement().getChildNodes();
+//				for (int i = 0; i < nodeList.getLength(); i++) {
+//					System.out.println("Item "+i+": "+nodeList.item(i));
+		//
+////					Node node = nodeList.item(i);
+		////
+////					if (node.getNodeType() == Node.ELEMENT_NODE) {
+////						//Element elem = (Element) node;
+////						//JOptionPane.showMessageDialog(null, "node: "+ elem.toString());
+////						//echo(node);
+////					}
+//				}// for
+//				// checking other Document stuff
+//				Node node = nodeList.item(0);
+//				System.out.println("Checking the first node...");
+//				System.out.println("Local Name: "+node.getLocalName());
+//				System.out.println("Node Name: "+node.getNodeName());
+//				System.out.println("Node Type: "+node.getNodeType());
+//				System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+//				NodeList nodeList1 = node.getChildNodes();
+//				System.out.println("Node children: "+nodeList1.getLength());
+//				
+//				// ... and so on, this is just newline
+//				// node i=1
+//				node = nodeList.item(1);
+//				System.out.println("Checking the node i=1...");
+//				System.out.println("Local Name: "+node.getLocalName());
+//				System.out.println("Node Name: "+node.getNodeName());
+//				System.out.println("Node Type: "+node.getNodeType());
+//				System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+//				System.out.println("Node Owner doc: "+node.getOwnerDocument());
+//				System.out.println("Node Parent Node: "+node.getParentNode());
+//				nodeList1 = node.getChildNodes();
+//				System.out.println("Node children: "+nodeList1.getLength());
+//				// loop over all children nodes
+//				for (int i=0, len=nodeList1.getLength();i<len;++i){
+//					
+//					node = nodeList1.item(i);
+//					System.out.println("---"+i);
+//					System.out.println("Local Name: "+node.getLocalName());
+//					System.out.println("Node Name: "+node.getNodeName());
+//					System.out.println("Node Type: "+node.getNodeType());
+//					System.out.println("Node Value: \""+node.getNodeValue()+"\"");
+//					System.out.println("Node Owner doc: "+node.getOwnerDocument());
+//					System.out.println("Node Parent Node: "+node.getParentNode());
+//					
+//				}
+//				
+//				
+//				// checking null response
+//				System.out.println("Checking null response...");
+//				if (node.getNodeValue()==null){
+//					System.out.println("Null detected, which is as it is");
+//				}
+//				else{
+//					System.out.println("Null not, value: \""+node.getNodeValue()+"\"");
+//				}
+	}//end of private void docChecker()
 	
 	/**
 	 *  Methods
@@ -635,5 +438,223 @@ class DOMparseJWX {
 		}
 		--indent;
 	}
+
+}// end of public class JavaWorkoutX extends JFrame
+
+class OpenJWX extends JFrame {
+	JPanel mainPanel;
+	JTextArea textUserSelection;
+	JTextArea labelNewUser;
+	JTextArea textNewUser;
+	JButton userCreate;
+	JButton userOK;
+	
+	File newUserFolder = null;
+	
+	DefaultListModel<String> model;
+	JList<String> userList;
+	
+	
+	/**
+	 * Methods for the constructor - OpenJWX
+	 */
+	
+	private void addcomponent(JPanel pn, JComponent cmp, int xpos, int ypos, int w, int h, int place, int stretch){
+		GridBagConstraints gridcns = new GridBagConstraints();
+		//GridBagConstraints(int gridx, int gridy, int gridwidth, int gridheight, double weightx, double weighty, int anchor, int fill, Insets insets, int ipadx, int ipady)
+		gridcns.gridx = xpos;
+		gridcns.gridy = ypos;
+		gridcns.gridwidth = w;
+		gridcns.gridheight = h;
+		gridcns.weightx = 100;
+		gridcns.weighty = 100;
+		gridcns.insets = new Insets(5,5,5,5);
+		gridcns.anchor = place;
+		gridcns.fill = stretch;
+		
+		pn.add(cmp, gridcns);
+	} // end private void addcomponent
+	
+	/**
+	 * CONSTRUCTOR!
+	 */
+	public OpenJWX(Document document, JavaWorkoutX frame, File runningFolder){
+		super("JAVA Workout - Selecting User");
+		this.setSize(450,200);
+		this.setLocationRelativeTo(null);
+		
+		boolean success;
+		File[] usersFolders = null;
+		
+		StringBuilder str2 = new StringBuilder();
+		//StringBuilder str1 = new StringBuilder();
+					
+		
+		
+		mainPanel = new JPanel();
+		mainPanel.setLayout(new GridBagLayout());
+		
+		textUserSelection = new JTextArea();
+		//textUserSelection.setLineWrap(true);
+		//textUserSelection.setWrapStyleWord(true);
+		//textUserSelection.setText("Select user: (This will close this dialog box)");
+		textUserSelection.setText("Select user: ");
+		textUserSelection.setEditable(false);
+		textUserSelection.setOpaque(false);
+		addcomponent(mainPanel, textUserSelection, 0,0,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
+		
+		labelNewUser = new JTextArea();
+		labelNewUser.setText("New user: ");
+		labelNewUser.setEditable(false);
+		labelNewUser.setOpaque(false);
+		addcomponent(mainPanel, labelNewUser, 1,0,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
+		
+		textNewUser = new JTextArea();
+		textNewUser.setBackground(new Color(255,255,255));
+		textNewUser.setPreferredSize(new Dimension(150,17));
+		//textNewUser.setText("...");
+		textNewUser.setEditable(true);
+		textNewUser.setOpaque(true);
+		addcomponent(mainPanel, textNewUser, 1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
+		
+		model = new DefaultListModel<>();
+		userList = new JList<>();
+		userList.setModel(model);
+		JScrollPane jscrl = new JScrollPane(userList);
+		Dimension dim = new Dimension(200,120);
+		jscrl.setPreferredSize(dim);
+		userList.setPreferredSize(dim);
+		//jscrl.setPreferredSize(new Dimension(200,120));
+		//test 15 elements
+//		for (int i = 0; i < 15; i++)
+//		      model.addElement("Element " + i);
+		// Finding all folders with users
+		str2.setLength(0);
+		str2.append(runningFolder.toString());
+		str2.append("\\data\\users\\");
+		
+		listFoldersOfUsers(usersFolders,model,str2.toString());
+		
+		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		addcomponent(mainPanel, jscrl, 0,1,1,6, GridBagConstraints.WEST, GridBagConstraints.NONE);
+		
+		userCreate = new JButton("Create user");
+		userCreate.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent evt) {
+				  // 
+				  boolean success;
+				  
+				  str2.setLength(0);
+				  str2.append(runningFolder.toString());
+				  str2.append('\\');
+				  newUserFolder = new File(str2.toString(),"data\\users\\"+textNewUser.getText());
+				  success = newUserFolder.mkdir();
+				  JOptionPane.showMessageDialog(null, "success(new users folder created): "+success);
+				  str2.setLength(0);
+				  str2.append(runningFolder.toString());
+				  str2.append("\\data\\users\\");
+				  listFoldersOfUsers(usersFolders,model,str2.toString());
+			  }
+		});
+		addcomponent(mainPanel, userCreate, 1,2,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
+		
+		userOK = new JButton("OK, Start Program");
+		userOK.addActionListener(new ActionListener() {
+			  public void actionPerformed(ActionEvent evt) {
+				// 
+				frame.currentUser = userList.getSelectedValue().toString();
+				//frame.textSelection.append(" "+frame.currentUser);
+				// dealing with user
+				String s = frame.currentUser;
+				// parsing xml
+				DOMparseJWX parser1 = new DOMparseJWX((DocumentBuilder) frame.document, frame, runningFolder, s);
+				dispose();
+			  }
+		});
+		addcomponent(mainPanel, userOK, 0,8,2,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
+		
+		
+		this.add(mainPanel);
+		this.pack();
+		this.setVisible(true);
+		// TESTING !!!!!!!!!!!!!!!!!!!!
+		//frame.appendTextSelection(" addition!");
+		
+	
+	}//end of Constructor OpenJWX
+	
+	/**
+	 * Other methods of OpenJWX
+	 */
+	private void listFoldersOfUsers(File[] usersFolders, DefaultListModel<String> model,String str){
+		StringBuilder str2 = new StringBuilder("");
+		model.clear();
+		try {
+			usersFolders = new File(str).listFiles();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, "Problem with listing user Folders files");
+			e.printStackTrace();
+		}
+		for (File temp : usersFolders){
+			if(temp.isDirectory()){
+				str2.setLength(0);
+				str2.append(temp.getName().toString());
+				model.addElement(str2.toString());
+			}
+		}
+	}
+	
+	
+}
+
+class DOMparseJWX {
+	
+	
+	public DOMparseJWX(DocumentBuilder document, JavaWorkoutX frame, File runningFolder, String currentUser){
+		StringBuilder str2 = new StringBuilder();
+		File topicsFile = null;
+		
+	
+	//factory.setIgnoringElementContentWhitespace(true);
+	//factory.setSchema(schema);
+	//factory.setNamespaceAware(true);
+	try {
+		
+		//
+		str2.setLength(0);
+		str2.append(runningFolder.toString());
+		//str2.append("\\data\\users\\"+currentUser+"\\topics.xml"); 
+		
+		topicsFile = new File(str2.toString(),"\\data\\users\\"+currentUser+"\\topics.xml");
+		//JOptionPane.showMessageDialog(null, topicsFile.toString());
+		if(!topicsFile.exists()){
+			JOptionPane.showMessageDialog(null, "no topics.xml in this user folder");
+			System.exit(0);
+		}
+//		if(topicsFile.exists()){
+//			JOptionPane.showMessageDialog(null, "topics.xml found!");
+//		}
+		//
+		//Document document = builder.parse(topicsFile);
+		//JOptionPane.showMessageDialog(null, "Still ok!");
+		document.parse(topicsFile);
+		// now passing 
+		
+		
+		
+	} catch (SAXException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+		
+	}// end constructor class DOMparseJWX
+	
+
 	
 }//end class DOMparseJWX
