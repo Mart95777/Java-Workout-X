@@ -76,17 +76,24 @@ public class JavaWorkoutX extends JFrame {
 		File runningFolder = null;
 		runningFolder = new File(str1.toString()).getParentFile();
 		// 
+		frame.checkForNewInstal(frame, runningFolder);
+		
+		// testing
+		JOptionPane.showMessageDialog(null, "currentUser: "+frame.currentUser);
+		// 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
+			OpenJWX frameOpenJWX = new OpenJWX(frame,builder,runningFolder);
+			
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		//
-		frame.checkForNewInstal(frame, runningFolder);
-		OpenJWX frameOpenJWX = new OpenJWX(frame,runningFolder);
-		frame.mDOMparse(DocumentBuilder builder, runningFolder,frame.currentUser);
+		
+		
+		
 		
 		
 	}
@@ -440,7 +447,7 @@ public class JavaWorkoutX extends JFrame {
 		--indent;
 	}
 	// method for parsing the document, currentUser should be known when calling it
-	private void mDOMparse(DocumentBuilder builder, File runningFolder, String currentUser){
+	protected void mDOMparse(DocumentBuilder builder, File runningFolder, String currentUser){
 		StringBuilder str2 = new StringBuilder();
 		File topicsFile = null;
 		
@@ -468,9 +475,10 @@ public class JavaWorkoutX extends JFrame {
 		Document document = builder.parse(topicsFile);
 		//JOptionPane.showMessageDialog(null, "Still ok!");
 		//////////////////////////////////////////////////////////
-		((DocumentBuilder) document).parse(topicsFile);
+		//((DocumentBuilder) document).parse(topicsFile);
 		// now passing 
-		
+		this.document = document;
+		this.docChecker(document);
 		
 		
 	} catch (SAXException e) {
@@ -524,7 +532,7 @@ class OpenJWX extends JFrame {
 	/**
 	 * CONSTRUCTOR!
 	 */
-	public OpenJWX(JavaWorkoutX frame, File runningFolder){
+	public OpenJWX(JavaWorkoutX frame, DocumentBuilder builder, File runningFolder){
 		super("JAVA Workout - Selecting User");
 		this.setSize(450,200);
 		this.setLocationRelativeTo(null);
@@ -614,6 +622,7 @@ class OpenJWX extends JFrame {
 				String s = frame.currentUser;
 				// parsing xml
 				//DOMparseJWX parser1 = new DOMparseJWX((DocumentBuilder) frame.document, frame, runningFolder, s);
+				frame.mDOMparse(builder, runningFolder,frame.currentUser);
 				dispose();
 			  }
 		});
