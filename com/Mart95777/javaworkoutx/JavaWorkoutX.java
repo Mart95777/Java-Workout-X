@@ -85,7 +85,8 @@ public class JavaWorkoutX extends JFrame {
 		}
 		//
 		frame.checkForNewInstal(frame, runningFolder);
-		OpenJWX frameOpenJWX = new OpenJWX(frame.document, frame,runningFolder);
+		OpenJWX frameOpenJWX = new OpenJWX(frame,runningFolder);
+		frame.mDOMparse(DocumentBuilder builder, runningFolder,frame.currentUser);
 		
 		
 	}
@@ -174,7 +175,7 @@ public class JavaWorkoutX extends JFrame {
 	}
 	
 	private void docChecker(Document document){
-		// ADDITIONAL TERSTS !!!!!!!!!!!!!!
+		// ADDITIONAL TESTS !!!!!!!!!!!!!!
 		
 				document.getDocumentElement().normalize();
 				//System.out.println("Doctype: "+document.getDoctype());
@@ -438,6 +439,51 @@ public class JavaWorkoutX extends JFrame {
 		}
 		--indent;
 	}
+	// method for parsing the document, currentUser should be known when calling it
+	private void mDOMparse(DocumentBuilder builder, File runningFolder, String currentUser){
+		StringBuilder str2 = new StringBuilder();
+		File topicsFile = null;
+		
+	
+	//factory.setIgnoringElementContentWhitespace(true);
+	//factory.setSchema(schema);
+	//factory.setNamespaceAware(true);
+	try {
+		
+		//
+		str2.setLength(0);
+		str2.append(runningFolder.toString());
+		//str2.append("\\data\\users\\"+currentUser+"\\topics.xml"); 
+		
+		topicsFile = new File(str2.toString(),"\\data\\users\\"+currentUser+"\\topics.xml");
+		//JOptionPane.showMessageDialog(null, topicsFile.toString());
+		if(!topicsFile.exists()){
+			JOptionPane.showMessageDialog(null, "no topics.xml in this user folder");
+			System.exit(0);
+		}
+//		if(topicsFile.exists()){
+			JOptionPane.showMessageDialog(null, "topics.xml found!");
+//		}
+		//
+		Document document = builder.parse(topicsFile);
+		//JOptionPane.showMessageDialog(null, "Still ok!");
+		//////////////////////////////////////////////////////////
+		((DocumentBuilder) document).parse(topicsFile);
+		// now passing 
+		
+		
+		
+	} catch (SAXException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+	//	return;
+	}// end method for parsing
 
 }// end of public class JavaWorkoutX extends JFrame
 
@@ -478,7 +524,7 @@ class OpenJWX extends JFrame {
 	/**
 	 * CONSTRUCTOR!
 	 */
-	public OpenJWX(Document document, JavaWorkoutX frame, File runningFolder){
+	public OpenJWX(JavaWorkoutX frame, File runningFolder){
 		super("JAVA Workout - Selecting User");
 		this.setSize(450,200);
 		this.setLocationRelativeTo(null);
@@ -567,7 +613,7 @@ class OpenJWX extends JFrame {
 				// dealing with user
 				String s = frame.currentUser;
 				// parsing xml
-				DOMparseJWX parser1 = new DOMparseJWX((DocumentBuilder) frame.document, frame, runningFolder, s);
+				//DOMparseJWX parser1 = new DOMparseJWX((DocumentBuilder) frame.document, frame, runningFolder, s);
 				dispose();
 			  }
 		});
@@ -608,53 +654,4 @@ class OpenJWX extends JFrame {
 	
 }
 
-class DOMparseJWX {
-	
-	
-	public DOMparseJWX(DocumentBuilder document, JavaWorkoutX frame, File runningFolder, String currentUser){
-		StringBuilder str2 = new StringBuilder();
-		File topicsFile = null;
-		
-	
-	//factory.setIgnoringElementContentWhitespace(true);
-	//factory.setSchema(schema);
-	//factory.setNamespaceAware(true);
-	try {
-		
-		//
-		str2.setLength(0);
-		str2.append(runningFolder.toString());
-		//str2.append("\\data\\users\\"+currentUser+"\\topics.xml"); 
-		
-		topicsFile = new File(str2.toString(),"\\data\\users\\"+currentUser+"\\topics.xml");
-		//JOptionPane.showMessageDialog(null, topicsFile.toString());
-		if(!topicsFile.exists()){
-			JOptionPane.showMessageDialog(null, "no topics.xml in this user folder");
-			System.exit(0);
-		}
-//		if(topicsFile.exists()){
-//			JOptionPane.showMessageDialog(null, "topics.xml found!");
-//		}
-		//
-		//Document document = builder.parse(topicsFile);
-		//JOptionPane.showMessageDialog(null, "Still ok!");
-		document.parse(topicsFile);
-		// now passing 
-		
-		
-		
-	} catch (SAXException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	
-	
-		
-	}// end constructor class DOMparseJWX
-	
 
-	
-}//end class DOMparseJWX
