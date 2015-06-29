@@ -59,6 +59,7 @@ public class JavaWorkoutX extends JFrame {
 	File dataFolder = null;
 	File topicsFile = null;
 	File usersFolder = null;
+	File runningFolder = null;
 	
 	String currentUser = null;
 	// document current for the user, gets parsed in DOMparser class
@@ -68,34 +69,9 @@ public class JavaWorkoutX extends JFrame {
 	
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		JavaWorkoutX frame = new JavaWorkoutX();
-		//
-		StringBuilder str1 = new StringBuilder();
-		str1.append(new File(".").getAbsolutePath());
-		File runningFolder = null;
-		runningFolder = new File(str1.toString()).getParentFile();
-		// 
-		frame.checkForNewInstal(frame, runningFolder);
-		
 		// testing
-		JOptionPane.showMessageDialog(null, "currentUser: "+frame.currentUser);
-		// 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			OpenJWX frameOpenJWX = new OpenJWX(frame,builder,runningFolder);
-			
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//
-		
-		
-		
-		
-		
+		JOptionPane.showMessageDialog(null, "after construction (in main now) currentUser: "+frame.currentUser);		
 	}
 	/**
 	 * ACCESSORS
@@ -145,6 +121,24 @@ public class JavaWorkoutX extends JFrame {
 		
 		this.add(mainPanel);
 		this.setVisible(true);
+		
+		StringBuilder str1 = new StringBuilder();
+		str1.append(new File(".").getAbsolutePath());
+		runningFolder = new File(str1.toString()).getParentFile();
+		this.checkForNewInstal(this, runningFolder);
+		
+		// testing
+		JOptionPane.showMessageDialog(null, "currentUser: "+this.currentUser);
+		// 
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			OpenJWX frameOpenJWX = new OpenJWX(this,builder,runningFolder);
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -427,7 +421,7 @@ public class JavaWorkoutX extends JFrame {
 	         child = child.getNextSibling()) {
 	        echo(child);
 	    }
-	}// end of echo
+	}// end of echo method
 	
 	private void nodePrint(Node n,int indent){
 		for (int i = 0; i< indent; ++i){
@@ -479,6 +473,8 @@ public class JavaWorkoutX extends JFrame {
 		// now passing 
 		this.document = document;
 		this.docChecker(document);
+		// launching method that runs workout exercises
+		this.workout();
 		
 		
 	} catch (SAXException e) {
@@ -492,6 +488,11 @@ public class JavaWorkoutX extends JFrame {
 	
 	//	return;
 	}// end method for parsing
+	private void workout() {
+		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(null, "starting workout... currentUser: "+this.currentUser);	
+		
+	}
 
 }// end of public class JavaWorkoutX extends JFrame
 
