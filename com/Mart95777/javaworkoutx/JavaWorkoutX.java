@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -64,7 +65,7 @@ public class JavaWorkoutX extends JFrame {
 	String currentUser = null;
 	// document current for the user, gets parsed in DOMparser class
 	Document document = null;
-			//new Document();
+	JTree treeOfUser = null;
 	
 	
 	@SuppressWarnings("resource")
@@ -118,8 +119,13 @@ public class JavaWorkoutX extends JFrame {
 		textSelection.setOpaque(false);
 		addcomponent(mainPanel, textSelection, 0,0,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
 		
+		JScrollPane treeView = new JScrollPane(treeOfUser);
+		treeView.setPreferredSize(new Dimension( 350, 500 ));
+		addcomponent(mainPanel, treeView, 0,1,1,3, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE);
+			
 		
 		this.add(mainPanel);
+		//this.pack();
 		this.setVisible(true);
 		
 		StringBuilder str1 = new StringBuilder();
@@ -472,7 +478,7 @@ public class JavaWorkoutX extends JFrame {
 		//((DocumentBuilder) document).parse(topicsFile);
 		// now passing 
 		this.document = document;
-		this.docChecker(document);
+		//this.docChecker(document);
 		// launching method that runs workout exercises
 		this.workout();
 		
@@ -491,8 +497,19 @@ public class JavaWorkoutX extends JFrame {
 	private void workout() {
 		// TODO Auto-generated method stub
 		JOptionPane.showMessageDialog(null, "starting workout... currentUser: "+this.currentUser);	
+		//testing
+		this.docChecker(document);
+		//this.textSelection.append("...addition");
+		//this.appendTextSelection("...append test");
+		
+		
 		
 	}
+	
+	/**
+	 *  SETTERS !!!!!!!!!!!!!!!
+	 */
+
 
 }// end of public class JavaWorkoutX extends JFrame
 
