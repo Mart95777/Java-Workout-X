@@ -10,6 +10,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -24,6 +27,9 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreePath;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -67,12 +73,28 @@ public class JavaWorkoutX extends JFrame {
 	Document document = null;
 	JTree treeOfUser = null;
 	
+	static final String[] typeName = {
+		  "none",
+		  "Element",
+		  "Attr",
+		  "Text",
+		  "CDATA",
+		  "EntityRef",
+		  "Entity",
+		  "ProcInstr",
+		  "Comment",
+		  "Document",
+		  "DocType",
+		  "DocFragment",
+		  "Notation",
+		}; 
+	
 	
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		JavaWorkoutX frame = new JavaWorkoutX();
 		// testing
-		JOptionPane.showMessageDialog(null, "after construction (in main now) currentUser: "+frame.currentUser);		
+		//JOptionPane.showMessageDialog(null, "after construction (in main now) currentUser: "+frame.currentUser);		
 	}
 	/**
 	 * ACCESSORS
@@ -134,7 +156,7 @@ public class JavaWorkoutX extends JFrame {
 		this.checkForNewInstal(this, runningFolder);
 		
 		// testing
-		JOptionPane.showMessageDialog(null, "currentUser: "+this.currentUser);
+		//JOptionPane.showMessageDialog(null, "currentUser: "+this.currentUser);
 		// 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -469,7 +491,7 @@ public class JavaWorkoutX extends JFrame {
 			System.exit(0);
 		}
 //		if(topicsFile.exists()){
-			JOptionPane.showMessageDialog(null, "topics.xml found!");
+			//JOptionPane.showMessageDialog(null, "topics.xml found!");
 //		}
 		//
 		Document document = builder.parse(topicsFile);
@@ -481,6 +503,11 @@ public class JavaWorkoutX extends JFrame {
 		//this.docChecker(document);
 		// launching method that runs workout exercises
 		this.workout();
+		this.treeOfUser.invalidate();
+		this.treeOfUser.validate();
+		this.treeOfUser.repaint();
+		JOptionPane.showMessageDialog(null, "So?...");	
+		
 		
 		
 	} catch (SAXException e) {
@@ -494,13 +521,16 @@ public class JavaWorkoutX extends JFrame {
 	
 	//	return;
 	}// end method for parsing
+	
 	private void workout() {
 		// TODO Auto-generated method stub
-		JOptionPane.showMessageDialog(null, "starting workout... currentUser: "+this.currentUser);	
+		//JOptionPane.showMessageDialog(null, "starting workout... currentUser: "+this.currentUser);	
 		//testing
 		this.docChecker(document);
 		//this.textSelection.append("...addition");
 		//this.appendTextSelection("...append test");
+		this.treeOfUser = new JTree(new DomToTreeModelAdapter());
+		JOptionPane.showMessageDialog(null, "we have new JTree.");	
 		
 		
 		
@@ -510,6 +540,158 @@ public class JavaWorkoutX extends JFrame {
 	 *  SETTERS !!!!!!!!!!!!!!!
 	 */
 
+	
+	
+	/**
+	 * Inner class, based on docs.oracle.com
+	 * This class is to make a TreeModel out of DOM tree
+	 *
+	 */
+	public class AdapterNode { 
+	  org.w3c.dom.Node domNode;
+
+	  // Construct an Adapter node from a DOM node
+	  public AdapterNode(org.w3c.dom.Node node) {
+	    domNode = node;
+	  }
+
+	  // Return a string that identifies this node
+	  //     in the tree
+	  public String toString() {
+	    String s = typeName[domNode.getNodeType()];
+	    String nodeName = domNode.getNodeName();
+	    if (! nodeName.startsWith("#")) {
+	      s += ": " + nodeName;
+	    }
+	    if (domNode.getNodeValue() != null) {
+	      if (s.startsWith("ProcInstr")) 
+	        s += ", "; 
+	      else 
+	        s += ": ";
+
+	      // Trim the value to get rid of NL's
+	      //    at the front
+	      String t = domNode.getNodeValue().trim();
+	      int x = t.indexOf("\n");
+	      if (x >= 0) t = t.substring(0, x);
+	      s += t;
+	    }
+	    return s;
+	  }
+	  public int index(AdapterNode child) {
+		    //System.err.println("Looking for index of " + child);
+		    int count = childCount();
+		    for (int i=0; i<count; i++) {
+		      AdapterNode n = this.child(i);
+		      if (child == n) return i;
+		    }
+		    return -1; // Should never get here.
+		  }
+
+		  public AdapterNode child(int searchIndex) {
+		    //Note: JTree index is zero-based. 
+		    org.w3c.dom.Node node =
+		      domNode.getChildNodes().item(searchIndex);
+		    return new AdapterNode(node); 
+		  }
+
+		  public int childCount() {
+		    return domNode.getChildNodes().getLength(); 
+		  }
+
+	} // AdapterNode
+	
+	// This adapter converts the current Document (a DOM) into 
+	// a JTree model. 
+	public class DomToTreeModelAdapter implements javax.swing.tree.TreeModel {
+	  // Basic TreeModel operations
+	  public Object  getRoot() {
+	    //System.err.println("Returning root: " +document);
+	    return new AdapterNode(document);
+	  }
+
+	  public boolean isLeaf(Object aNode) {
+	    // Determines whether the icon shows up to the left.
+	    // Return true for any node with no children
+	    AdapterNode node = (AdapterNode) aNode;
+	    if (node.childCount() > 0) return false;
+	    return true;
+	  }
+
+	  public int     getChildCount(Object parent){
+	    AdapterNode node = (AdapterNode) parent;
+	    return node.childCount();
+	  }
+
+	  public Object  getChild(Object parent, int index) {
+	    AdapterNode node = (AdapterNode) parent;
+	    return node.child(index);
+	  }
+
+	  public int     getIndexOfChild(Object parent, Object child) {
+	    AdapterNode node = (AdapterNode) parent;
+	    return node.index((AdapterNode) child);
+	  }
+
+	  public void valueForPathChanged(TreePath path, Object newValue) 
+	  {
+	    // Null. We won't be making changes in the GUI
+	    // If we did, we would ensure the new value was
+	    // really new and then fire a TreeNodesChanged event.
+	  }
+	  // optionally, but would need code changes ... (line below):
+	  //private LinkedList listenerList = new LinkedList();
+	  private Vector listenerList = new Vector();
+	  public void addTreeModelListener(TreeModelListener listener ) {
+	    if ( listener != null && ! listenerList.contains(listener) ) {
+	      listenerList.addElement( listener );
+	    }
+	  }
+
+	  public void removeTreeModelListener(TreeModelListener listener ) 
+	  {
+	    if ( listener != null ) {
+	      listenerList.removeElement( listener );
+	    }
+	  }
+	  // optional methods
+	  public void fireTreeNodesChanged( TreeModelEvent e ) {
+		    Enumeration listeners = listenerList.elements();
+		    while ( listeners.hasMoreElements() ) {
+		      TreeModelListener listener = 
+		        (TreeModelListener) listeners.nextElement();
+		      listener.treeNodesChanged( e );
+		    }
+		  }
+
+		  public void fireTreeNodesInserted( TreeModelEvent e ) {
+		    Enumeration listeners = listenerList.elements();
+		    while ( listeners.hasMoreElements() ) {
+		      TreeModelListener listener = 
+		        (TreeModelListener)   listeners.nextElement();
+		      listener.treeNodesInserted( e );
+		    }
+		  } 
+
+		  public void fireTreeNodesRemoved( TreeModelEvent e ) {
+		    Enumeration listeners = listenerList.elements();
+		    while ( listeners.hasMoreElements() ) {
+		      TreeModelListener listener = 
+		        (TreeModelListener) listeners.nextElement();
+		      listener.treeNodesRemoved( e );
+		    }
+		  } 
+
+		  public void fireTreeStructureChanged( TreeModelEvent e ) {
+		    Enumeration listeners = listenerList.elements();
+		    while ( listeners.hasMoreElements() ) {
+		      TreeModelListener listener = 
+		        (TreeModelListener) listeners.nextElement();
+		      listener.treeStructureChanged( e );
+		    }
+		  }
+
+	} // DomToTreeModelAdapter
 
 }// end of public class JavaWorkoutX extends JFrame
 
@@ -677,6 +859,7 @@ class OpenJWX extends JFrame {
 			}
 		}
 	}
+	
 	
 	
 }
