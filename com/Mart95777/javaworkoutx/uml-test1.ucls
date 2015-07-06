@@ -3,7 +3,7 @@
   associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="com.Mart95777.javaworkoutx.JavaWorkoutX" project="Java-Workout-X" 
     file="/Java-Workout-X/src/com/Mart95777/javaworkoutx/JavaWorkoutX.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="405" width="305" x="235" y="-12"/>    
+    <position height="-1" width="-1" x="231" y="216"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +12,7 @@
   </class>  
   <class id="2" language="java" name="com.Mart95777.javaworkoutx.OpenJWX" project="Java-Workout-X" 
     file="/Java-Workout-X/src/com/Mart95777/javaworkoutx/JavaWorkoutX.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="755" y="443"/>    
+    <position height="-1" width="-1" x="578" y="396"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
