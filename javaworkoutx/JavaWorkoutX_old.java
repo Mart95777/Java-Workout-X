@@ -1,4 +1,4 @@
-package com.Mart95777.javaworkoutx;
+package javaworkoutx;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.DocumentBuilder;
@@ -42,6 +43,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,6 +55,7 @@ import org.w3c.dom.Entity;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+//import org.w3c.dom.xpath.XPathExpression;
 import org.xml.sax.SAXException;
 
 /**
@@ -56,7 +63,7 @@ import org.xml.sax.SAXException;
  *
  */
 
-public class JavaWorkoutX extends JFrame {
+public class JavaWorkoutX_old extends JFrame {
 
 
 	/**
@@ -75,9 +82,9 @@ public class JavaWorkoutX extends JFrame {
 	// document current for the user, gets parsed in DOMparser class
 	Document document = null;
 	JTree treeOfUser = null;
-	DefaultTreeModel myModelTree;
-	//Node root;
-	//NodeList listOfCurrentTopics;
+	DefaultTreeModel myModelTree = null;
+	DefaultMutableTreeNode root = null;
+	NodeList listOfCurrentTopics = null;
 	
 	
 	static final String[] typeName = {
@@ -97,12 +104,12 @@ public class JavaWorkoutX extends JFrame {
 		}; 
 	
 	
-	@SuppressWarnings("resource")
-	public static void main(String[] args) {
-		JavaWorkoutX frame = new JavaWorkoutX();
-		// testing
-		//JOptionPane.showMessageDialog(null, "after construction (in main now) currentUser: "+frame.currentUser);		
-	}
+//	@SuppressWarnings("resource")
+//	public static void main(String[] args) {
+//		JavaWorkoutX_old frame = new JavaWorkoutX_old();
+//		// testing
+//		//JOptionPane.showMessageDialog(null, "after construction (in main now) currentUser: "+frame.currentUser);		
+//	}
 	/**
 	 * ACCESSORS
 	 */
@@ -134,7 +141,7 @@ public class JavaWorkoutX extends JFrame {
 	/**
 	 * CONSTRUCTOR!
 	 */
-	public JavaWorkoutX(){
+	public JavaWorkoutX_old(){
 		super("JAVA Workout X, ver. " + VERSION);
 		this.setSize(700,500);
 		this.setLocationRelativeTo(null);
@@ -221,7 +228,7 @@ public class JavaWorkoutX extends JFrame {
 	 * - if code files with examples are in place
 	 * - ...
 	 */
-	private void checkForNewInstal(JavaWorkoutX frame, File runningFolder){
+	private void checkForNewInstal(JavaWorkoutX_old frame, File runningFolder){
 		//...
 		boolean success;
 		StringBuilder str2 = new StringBuilder();
@@ -515,7 +522,7 @@ public class JavaWorkoutX extends JFrame {
 		--indent;
 	}
 	// method for parsing the document, currentUser should be known when calling it
-	protected void mDOMparse(DocumentBuilder builder, File runningFolder, String currentUser){
+	protected void mDOMparse(DocumentBuilder builder, File runningFolder, String currentUser) throws XPathExpressionException{
 		StringBuilder str2 = new StringBuilder();
 		File topicsFile = null;
 		
@@ -541,8 +548,20 @@ public class JavaWorkoutX extends JFrame {
 //		}
 		//
 		Document document = builder.parse(topicsFile);
-		Node root = (Node) document.getDocumentElement();
+		//Node root = (Node) document.getDocumentElement();
 		//NodeList listOfCurrentTopics  = getNodesFrom(root, "/people/student");
+		this.root = new DefaultMutableTreeNode();
+        this.myModelTree = new DefaultTreeModel(root);
+        //loadXMLDocument(root);
+        // insert of loadXML functionality
+        Node root = (Node) document.getDocumentElement();
+        this.listOfCurrentTopics = getNodesFrom(root, "/topics/topic");
+        
+        
+        this.treeOfUser = new JTree(this.myModelTree);
+        this.treeOfUser.setRootVisible(false);
+        this.treeOfUser.setShowsRootHandles(true);
+        this.treeOfUser.expandPath(new TreePath(root));
 		
 		
 		
@@ -604,7 +623,54 @@ public class JavaWorkoutX extends JFrame {
 	/**
 	 *  SETTERS !!!!!!!!!!!!!!!
 	 */
+	protected Node getNodeFrom(Node node, String query) throws XPathExpressionException {
 
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPathExpression xExpress = xPath.compile(query);
+        return (Node)xExpress.evaluate(node, XPathConstants.NODE);
+
+    }
+
+    protected NodeList getNodesFrom(Node node, String query) throws XPathExpressionException {
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPathExpression xExpress = xPath.compile(query);
+        return (NodeList)xExpress.evaluate(node, XPathConstants.NODESET);
+
+    }
+
+    protected void loadXMLDocument(DefaultMutableTreeNode parent) {
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(getClass().getResourceAsStream("/People.xml"));
+            Node root = (Node) doc.getDocumentElement();
+
+            NodeList students = getNodesFrom(root, "/people/student");
+            for (int index = 0; index < students.getLength(); index++) {
+
+                Node studentNode = students.item(index);
+                DefaultMutableTreeNode studentTreeNode = new DefaultMutableTreeNode("Student");
+                Node name = getNodeFrom(studentNode, "name");
+                Node course = getNodeFrom(studentNode, "course");
+                Node semester = getNodeFrom(studentNode, "semester");
+                Node scheme = getNodeFrom(studentNode, "scheme");
+
+                studentTreeNode.setUserObject(name.getTextContent());
+                studentTreeNode.add(new DefaultMutableTreeNode("Course: " + course.getTextContent()));
+                studentTreeNode.add(new DefaultMutableTreeNode("Semester: " + semester.getTextContent()));
+                studentTreeNode.add(new DefaultMutableTreeNode("Scheme: " + scheme.getTextContent()));
+
+                parent.add(studentTreeNode);
+
+            }
+
+        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException ex) {
+            ex.printStackTrace();
+        }
+
+    }
 	
 	
 
@@ -649,7 +715,7 @@ class OpenJWX extends JFrame {
 	/**
 	 * CONSTRUCTOR!
 	 */
-	public OpenJWX(JavaWorkoutX frame, DocumentBuilder builder, File runningFolder){
+	public OpenJWX(JavaWorkoutX_old frame, DocumentBuilder builder, File runningFolder){
 		super("JAVA Workout - Selecting User");
 		this.setSize(450,200);
 		this.setLocationRelativeTo(null);
@@ -739,7 +805,12 @@ class OpenJWX extends JFrame {
 				String s = frame.currentUser;
 				// parsing xml
 				//DOMparseJWX parser1 = new DOMparseJWX((DocumentBuilder) frame.document, frame, runningFolder, s);
-				frame.mDOMparse(builder, runningFolder,frame.currentUser);
+				try {
+					frame.mDOMparse(builder, runningFolder,frame.currentUser);
+				} catch (XPathExpressionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				dispose();
 			  }
 		});
