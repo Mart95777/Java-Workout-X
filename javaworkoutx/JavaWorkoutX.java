@@ -4,6 +4,7 @@
 package javaworkoutx;
 
 import javax.swing.JFrame;
+import javaworkoutxcontrollers.*;
 
 /**
  * @author marcin
@@ -18,13 +19,15 @@ public class JavaWorkoutX extends JFrame{
 	 */
 	public JavaWorkoutX() {
 		// TODO Auto-generated constructor stub
-		super("JAVA Workout X, [after change] ver. " + VERSION);
-		this.setSize(700,500);
-		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLayout(null);
+//		super("JAVA Workout X, [after change] ver. " + VERSION);
+//		this.setSize(700,500);
+//		this.setLocationRelativeTo(null);
+//		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		this.setLayout(null);
+//		
+//		this.setVisible(true);
 		
-		this.setVisible(true);
+		
 		
 	}
 
@@ -33,8 +36,9 @@ public class JavaWorkoutX extends JFrame{
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		JavaWorkoutX frame = new JavaWorkoutX();
-		
+		//JavaWorkoutX frame = new JavaWorkoutX();
+		JavaWorkoutXController controller = new JavaWorkoutXController();
+		controller.startApplication();
 
 	}
 
