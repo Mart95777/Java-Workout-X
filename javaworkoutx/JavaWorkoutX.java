@@ -5,6 +5,8 @@ package javaworkoutx;
 
 import javax.swing.JFrame;
 import javaworkoutxcontrollers.*;
+import javaworkoutxmodels.*;
+import javaworkoutxviews.*;
 
 /**
  * @author marcin
@@ -37,8 +39,11 @@ public class JavaWorkoutX extends JFrame{
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//JavaWorkoutX frame = new JavaWorkoutX();
-		JavaWorkoutXController controller = new JavaWorkoutXController();
-		controller.startApplication();
+		JavaWorkoutXModel model = new JavaWorkoutXModel();
+		JavaWorkoutXView view = new JavaWorkoutXView();
+		
+		JavaWorkoutXController controller = new JavaWorkoutXController(model,view);
+		//controller.startApplication();
 
 	}
 
