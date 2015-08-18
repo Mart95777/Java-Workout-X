@@ -3,16 +3,19 @@
  */
 package javaworkoutxviews;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
 
 /**
@@ -28,6 +31,9 @@ public class JavaWorkoutXView extends JFrame {
 	JSplitPane splitPaneRight;
 	JScrollPane scrollLeft;
 	JTree jtree;
+	JTextArea jText1;
+	JTextArea jText2;
+	Color colorBKG;
 
 	/**
 	 * CONSTRUCTOR
@@ -43,15 +49,24 @@ public class JavaWorkoutXView extends JFrame {
 		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new GridBagLayout());
+		colorBKG = mainPanel.getBackground();
 		
 		// tree on the left, starting from the last
 		jtree = new JTree();
 		
 		// on the right, another split pane, this time horizontal
-		// a
-		splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT,null,null);
+		// and for testing
+		jText1 = new JTextArea("test...1");
+		jText1.setEditable(false);
+		jText1.setBackground(colorBKG);
+		jText1.setBorder(BorderFactory.createEmptyBorder());
 		
-		splitPaneMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jtree,splitPaneMain);
+		jText2 = new JTextArea("test...2");
+		
+		splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT,jText1,jText2);
+		//splitPaneRight.setBorder(BorderFactory.createEmptyBorder());
+		
+		splitPaneMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jtree,splitPaneRight);
 		mainPanel.add(splitPaneMain);
 		
 		
