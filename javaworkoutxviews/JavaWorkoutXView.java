@@ -8,10 +8,14 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -31,9 +35,20 @@ public class JavaWorkoutXView extends JFrame {
 	JSplitPane splitPaneRight;
 	JScrollPane scrollLeft;
 	JTree jtree;
+	JPanel rightInfoPanel;
 	JTextArea jText1;
 	JTextArea jText2;
 	Color colorBKG;
+	
+	JButton buttonPrevious = new JButton("<");
+	JButton buttonNext  = new JButton(">");
+	JButton buttonOpenCode = new JButton("Open Code");
+	
+	static String WIN_PROGRAMFILES = System.getenv("programfiles");
+	static String WIN_PROGRAMFILES86 = System.getenv("ProgramFiles(X86)");
+	
+	//System.getenv("%programfiles% (x86)"); 
+    static String FILE_SEPARATOR   = System.getProperty("file.separator");
 
 	/**
 	 * CONSTRUCTOR
@@ -48,7 +63,8 @@ public class JavaWorkoutXView extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		mainPanel = new JPanel();
-		mainPanel.setLayout(new GridBagLayout());
+		mainPanel.setPreferredSize(new Dimension(680,480));
+		//mainPanel.setLayout(new GridBagLayout());
 		colorBKG = mainPanel.getBackground();
 		
 		// tree on the left, starting from the last
@@ -56,14 +72,36 @@ public class JavaWorkoutXView extends JFrame {
 		
 		// on the right, another split pane, this time horizontal
 		// and for testing
+		
+		rightInfoPanel = new JPanel();
+		rightInfoPanel.setLayout(new GridBagLayout());
+		
+		
+		
 		jText1 = new JTextArea("test...1");
 		jText1.setEditable(false);
 		jText1.setBackground(colorBKG);
 		jText1.setBorder(BorderFactory.createEmptyBorder());
 		
+		addComponent(rightInfoPanel,jText1,0,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,100,100);
+		addComponent(rightInfoPanel,buttonPrevious,1,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,70,70);
+		addComponent(rightInfoPanel,buttonNext,2,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,70,70);
+		addComponent(rightInfoPanel,buttonOpenCode,1,1,2,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,70,70);
+		
+		buttonOpenCode.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e)
+	            {
+	                //System.out.println("You clicked the button");
+	            	JOptionPane.showMessageDialog(null, WIN_PROGRAMFILES);
+	            	JOptionPane.showMessageDialog(null, WIN_PROGRAMFILES86);
+	            	
+	            }
+	        });    
+		
+		
 		jText2 = new JTextArea("test...2");
 		
-		splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT,jText1,jText2);
+		splitPaneRight = new JSplitPane(JSplitPane.VERTICAL_SPLIT,rightInfoPanel,jText2);
 		//splitPaneRight.setBorder(BorderFactory.createEmptyBorder());
 		
 		splitPaneMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jtree,splitPaneRight);
