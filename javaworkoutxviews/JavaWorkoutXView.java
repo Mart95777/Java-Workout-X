@@ -10,17 +10,23 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.JMenuBar;
 
 /**
  * @author marcin
@@ -40,9 +46,13 @@ public class JavaWorkoutXView extends JFrame {
 	JTextArea jText2;
 	Color colorBKG;
 	
+	JMenuBar menuBar;
+	
 	JButton buttonPrevious = new JButton("<");
 	JButton buttonNext  = new JButton(">");
 	JButton buttonOpenCode = new JButton("Open Code");
+	
+	static File NOTEPAD_PP_PATH = null;
 	
 	static String WIN_PROGRAMFILES = System.getenv("programfiles");
 	static String WIN_PROGRAMFILES86 = System.getenv("ProgramFiles(X86)");
@@ -107,9 +117,44 @@ public class JavaWorkoutXView extends JFrame {
 		splitPaneMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jtree,splitPaneRight);
 		mainPanel.add(splitPaneMain);
 		
+		// menu bar =================== >
+		menuBar = new JMenuBar();
 		
 		
-		
+		// File Menu, F - Mnemonic
+	    JMenu fileMenu = new JMenu("File");
+	    fileMenu.setMnemonic(KeyEvent.VK_F);
+	    menuBar.add(fileMenu);
+	    
+	    // Settings Menu, S - Mnemonic
+	    JMenu settingsMenu = new JMenu("Settings");
+	    settingsMenu.setMnemonic(KeyEvent.VK_S);
+	    menuBar.add(settingsMenu);
+	    
+	    //JMenuItem newMenuItem = new JMenuItem("Notepad++ Path", KeyEvent.VK_N);
+	    JMenuItem notepadppMenuItem = new JMenuItem("Notepad++ Path");
+	    notepadppMenuItem.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		JOptionPane.showMessageDialog(null, "You can set or change path\nto Notepad++ application");
+	    		File notepadFolder = setNotepadPPPath();
+	    		String s = notepadFolder.toString() + "\\notepad++.exe";
+	    		NOTEPAD_PP_PATH = new File(s);
+	    		
+	    		JOptionPane.showMessageDialog(null, NOTEPAD_PP_PATH);
+	    		
+	    		//}
+	    		
+	        }
+	    });
+	    settingsMenu.add(notepadppMenuItem);
+
+	    
+	    
+	    
+	    
+	    setJMenuBar(menuBar);
+	    
+	    
 		this.add(mainPanel);
 		//this.pack();
 	}
@@ -149,5 +194,18 @@ public class JavaWorkoutXView extends JFrame {
 //		
 //		pn.add(cmp, gridcns);
 //	} // end private void addcomponent
+	
+	private File setNotepadPPPath(){
+	// this method finds string which is path to folder, where Notepadd++ is
+		JFileChooser f = new JFileChooser();
+		f.setCurrentDirectory(new java.io.File(".")); // start at application current directory
+		f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnVal = f.showOpenDialog(this);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			return f.getSelectedFile();
+		} else {
+			return null;
+		}
+		}//end of private void setNotepadPPPath(){
 
 }
