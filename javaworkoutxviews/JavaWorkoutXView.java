@@ -73,12 +73,14 @@ public class JavaWorkoutXView extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		mainPanel = new JPanel();
-		mainPanel.setPreferredSize(new Dimension(680,480));
+		//mainPanel.setLayout(new GridBagLayout());
+		//mainPanel.setPreferredSize(new Dimension(680,480));
 		//mainPanel.setLayout(new GridBagLayout());
 		colorBKG = mainPanel.getBackground();
 		
 		// tree on the left, starting from the last
 		jtree = new JTree();
+		jtree.setPreferredSize(new Dimension(280,1250));
 		
 		// on the right, another split pane, this time horizontal
 		// and for testing
@@ -92,6 +94,7 @@ public class JavaWorkoutXView extends JFrame {
 		jText1.setEditable(false);
 		jText1.setBackground(colorBKG);
 		jText1.setBorder(BorderFactory.createEmptyBorder());
+		jText1.setPreferredSize(new Dimension(880,200));
 		
 		addComponent(rightInfoPanel,jText1,0,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,100,100);
 		addComponent(rightInfoPanel,buttonPrevious,1,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,70,70);
@@ -115,6 +118,7 @@ public class JavaWorkoutXView extends JFrame {
 		//splitPaneRight.setBorder(BorderFactory.createEmptyBorder());
 		
 		splitPaneMain = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jtree,splitPaneRight);
+		//splitPaneMain.setLayout(new GridBagLayout());
 		mainPanel.add(splitPaneMain);
 		
 		// menu bar =================== >
