@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -66,9 +68,18 @@ public class JavaWorkoutXView extends JFrame {
 	public JavaWorkoutXView() {
 		// TODO Auto-generated constructor stub
 		super("Java Workout X program, ...");
-		this.setPreferredSize(new Dimension(700,500));
+		//this.setPreferredSize(new Dimension(700,500));
+		// getting "client" area
+		Rectangle clientRectangle = this.getContentPane().getBounds();
+		clientRectangle = this.getBounds();
+				//JOptionPane.showMessageDialog(null, "clientRectangle.height: "+clientRectangle.getHeight());
+				//JOptionPane.showMessageDialog(null, "clientRectangle.width: "+clientRectangle.getWidth());
 		// temporary
-		this.setSize(1600, 900);
+		// get screen size
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//int screenW = screenSize.width;
+		//int screenH = screenSize.height;
+		this.setSize(screenSize.width-80, screenSize.height-100);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -80,7 +91,7 @@ public class JavaWorkoutXView extends JFrame {
 		
 		// tree on the left, starting from the last
 		jtree = new JTree();
-		jtree.setPreferredSize(new Dimension(280,1250));
+		jtree.setPreferredSize(new Dimension(300,clientRectangle.height ));
 		
 		// on the right, another split pane, this time horizontal
 		// and for testing
@@ -94,7 +105,10 @@ public class JavaWorkoutXView extends JFrame {
 		jText1.setEditable(false);
 		jText1.setBackground(colorBKG);
 		jText1.setBorder(BorderFactory.createEmptyBorder());
-		jText1.setPreferredSize(new Dimension(880,200));
+		// finding sizes
+
+		int w = clientRectangle.width-280;
+		jText1.setPreferredSize(new Dimension(w,200));
 		
 		addComponent(rightInfoPanel,jText1,0,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,100,100);
 		addComponent(rightInfoPanel,buttonPrevious,1,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,70,70);
