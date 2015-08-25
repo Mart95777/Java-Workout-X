@@ -70,10 +70,7 @@ public class JavaWorkoutXView extends JFrame {
 		super("Java Workout X program, ...");
 		//this.setPreferredSize(new Dimension(700,500));
 		// getting "client" area
-		Rectangle clientRectangle = this.getContentPane().getBounds();
-		clientRectangle = this.getBounds();
-				//JOptionPane.showMessageDialog(null, "clientRectangle.height: "+clientRectangle.getHeight());
-				//JOptionPane.showMessageDialog(null, "clientRectangle.width: "+clientRectangle.getWidth());
+		
 		// temporary
 		// get screen size
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -91,7 +88,7 @@ public class JavaWorkoutXView extends JFrame {
 		
 		// tree on the left, starting from the last
 		jtree = new JTree();
-		jtree.setPreferredSize(new Dimension(300,clientRectangle.height ));
+
 		
 		// on the right, another split pane, this time horizontal
 		// and for testing
@@ -107,8 +104,7 @@ public class JavaWorkoutXView extends JFrame {
 		jText1.setBorder(BorderFactory.createEmptyBorder());
 		// finding sizes
 
-		int w = clientRectangle.width-280;
-		jText1.setPreferredSize(new Dimension(w,200));
+
 		
 		addComponent(rightInfoPanel,jText1,0,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,100,100);
 		addComponent(rightInfoPanel,buttonPrevious,1,0,1,1,GridBagConstraints.CENTER,GridBagConstraints.BOTH,2,2,2,2,3,3,70,70);
@@ -174,6 +170,14 @@ public class JavaWorkoutXView extends JFrame {
 	    
 	    
 		this.add(mainPanel);
+		// Resizing ... ================================================================================
+		Rectangle clientRectangle = this.getContentPane().getBounds();
+		clientRectangle = this.getBounds();
+				//JOptionPane.showMessageDialog(null, "clientRectangle.height: "+clientRectangle.getHeight());
+				//JOptionPane.showMessageDialog(null, "clientRectangle.width: "+clientRectangle.getWidth());
+		jtree.setPreferredSize(new Dimension(300,clientRectangle.height-75));
+		int w = clientRectangle.width-500;
+		jText1.setPreferredSize(new Dimension(w,200));
 		//this.pack();
 	}
 	
