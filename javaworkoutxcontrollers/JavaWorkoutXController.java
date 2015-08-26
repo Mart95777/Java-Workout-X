@@ -3,6 +3,8 @@
  */
 package javaworkoutxcontrollers;
 
+import javax.swing.JOptionPane;
+
 import javaworkoutxviews.*;
 import javaworkoutxmodels.*;
 
@@ -28,6 +30,10 @@ public class JavaWorkoutXController {
 		this.view = view;
 		
 		view.setVisible(true);
+	}// end of constructor
+	
+	public void updateView(){
+		JOptionPane.showMessageDialog(null, "Marker for updating view");
 	}
 
 }
