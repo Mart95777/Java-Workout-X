@@ -200,7 +200,11 @@ public class JavaWorkoutXView extends JFrame {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
+			
 			OpenJWX frameOpenJWX = new OpenJWX(this,builder,runningFolder);
+			this.toFront();
+			this.requestFocus();
+			this.repaint();
 			
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
