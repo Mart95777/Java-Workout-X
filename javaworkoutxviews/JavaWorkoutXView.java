@@ -30,6 +30,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.JMenuBar;
 
+import javaworkoutxcontrollers.*;
+
 /**
  * @author marcin
  *
@@ -61,6 +63,8 @@ public class JavaWorkoutXView extends JFrame {
 	
 	//System.getenv("%programfiles% (x86)"); 
     static String FILE_SEPARATOR   = System.getProperty("file.separator");
+    
+    private JavaWorkoutXController controller = new JavaWorkoutXController();
 
 	/**
 	 * CONSTRUCTOR
@@ -140,6 +144,15 @@ public class JavaWorkoutXView extends JFrame {
 	    fileMenu.setMnemonic(KeyEvent.VK_F);
 	    menuBar.add(fileMenu);
 	    
+	    // Set user, under file
+	    JMenuItem setUserMenuItem = new JMenuItem("Set User");
+	    setUserMenuItem.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		controller.getUser();
+	    	}
+	    });
+	    fileMenu.add(setUserMenuItem);
+	    
 	    // Settings Menu, S - Mnemonic
 	    JMenu settingsMenu = new JMenu("Settings");
 	    settingsMenu.setMnemonic(KeyEvent.VK_S);
@@ -161,10 +174,6 @@ public class JavaWorkoutXView extends JFrame {
 	        }
 	    });
 	    settingsMenu.add(notepadppMenuItem);
-
-	    
-	    
-	    
 	    
 	    setJMenuBar(menuBar);
 	    

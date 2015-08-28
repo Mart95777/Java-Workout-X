@@ -32,8 +32,17 @@ public class JavaWorkoutXController {
 		view.setVisible(true);
 	}// end of constructor
 	
+	//constructor2
+	public JavaWorkoutXController(){};
+	
 	public void updateView(){
 		JOptionPane.showMessageDialog(null, "Marker for updating view");
+	}// end public void updateView(){
+	
+	public void getUser(){
+		JOptionPane.showMessageDialog(null, "Marker for controller getUser");
+		CurrentUserGetter curUserGetter = new CurrentUserGetter( model);
+		
 	}
 
 }
