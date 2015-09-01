@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javaworkoutx.JavaWorkoutX_old;
+import javaworkoutxcontrollers.JavaWorkoutXController;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -38,6 +39,9 @@ public class CurrentUserGetter extends JFrame {
 	DefaultListModel<String> modelDLM;
 	JList<String> userList;
 	
+	JavaWorkoutXModel modelRef = null;
+	JavaWorkoutXController controller = null;
+	
 	
 	/**
 	 * Methods for the constructor - OpenJWX
@@ -62,8 +66,11 @@ public class CurrentUserGetter extends JFrame {
 	/**
 	 * CONSTRUCTOR!
 	 */
-	public CurrentUserGetter(JavaWorkoutXModel model){
+	public CurrentUserGetter(JavaWorkoutXModel model, JavaWorkoutXController controller){
 		super("JAVA Workout - Selecting User");
+		
+		this.controller = controller;
+		this.modelRef = model;
 		this.setSize(450,200);
 		this.setLocationRelativeTo(null);
 		
@@ -103,9 +110,33 @@ public class CurrentUserGetter extends JFrame {
 		
 		modelDLM = new DefaultListModel<>();
 		userList = new JList<>();
-		userList.setModel(modelDLM);
+		// moved !!! -> userList.setModel(modelDLM);
+		
+		// Finding running folder
+				StringBuilder str1 = new StringBuilder();
+				str1.append(new File(".").getAbsolutePath());
+				runningFolder = new File(str1.toString()).getParentFile();
+				
+				
+				str2.setLength(0);
+				if (runningFolder != null){
+					str2.append(runningFolder.toString());
+					str2.append("\\data\\users\\");
+				}
+				else{
+					JOptionPane.showMessageDialog(null, "ERROR! Running folder string not set.");
+				}
+				
+				
+				listFoldersOfUsers(usersFolders,modelDLM,str2.toString());
+//				mainPanel.validate();
+//				mainPanel.repaint();
+				userList.setModel(modelDLM);
+				userList.setPreferredSize(new Dimension(300,300));
+		
+		
 		JScrollPane jscrl = new JScrollPane(userList);
-		Dimension dim = new Dimension(200,120);
+		Dimension dim = new Dimension(320,320);
 		jscrl.setPreferredSize(dim);
 		userList.setPreferredSize(dim);
 		//jscrl.setPreferredSize(new Dimension(200,120));
@@ -113,11 +144,8 @@ public class CurrentUserGetter extends JFrame {
 //		for (int i = 0; i < 15; i++)
 //		      model.addElement("Element " + i);
 		// Finding all folders with users
-		str2.setLength(0);
-		str2.append(runningFolder.toString());
-		str2.append("\\data\\users\\");
 		
-		listFoldersOfUsers(usersFolders,modelDLM,str2.toString());
+		
 		
 		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		addcomponent(mainPanel, jscrl, 0,1,1,6, GridBagConstraints.WEST, GridBagConstraints.NONE);
@@ -146,10 +174,13 @@ public class CurrentUserGetter extends JFrame {
 		userOK.addActionListener(new ActionListener() {
 			  public void actionPerformed(ActionEvent evt) {
 				// 
-				model.currentUser = userList.getSelectedValue().toString();
+				
+				String str = userList.getSelectedValue().toString();
+				//modelRef.setCurrentUser(str);
+				setUser(userList.getSelectedValue().toString());
 				//frame.textSelection.append(" "+frame.currentUser);
 				// dealing with user
-				
+				//JOptionPane.showMessageDialog(null, "About to dispose");
 				dispose();
 			  }
 		});
@@ -157,6 +188,7 @@ public class CurrentUserGetter extends JFrame {
 		
 		
 		this.add(mainPanel);
+		
 		this.pack();
 		this.setVisible(true);
 		// TESTING !!!!!!!!!!!!!!!!!!!!
@@ -168,9 +200,9 @@ public class CurrentUserGetter extends JFrame {
 	/**
 	 * Other methods of OpenJWX
 	 */
-	private void listFoldersOfUsers(File[] usersFolders, DefaultListModel<String> model,String str){
+	private void listFoldersOfUsers(File[] usersFolders, DefaultListModel<String> modelDLM,String str){
 		StringBuilder str2 = new StringBuilder("");
-		model.clear();
+		modelDLM.clear();
 		try {
 			usersFolders = new File(str).listFiles();
 		} catch (Exception e) {
@@ -178,13 +210,26 @@ public class CurrentUserGetter extends JFrame {
 			JOptionPane.showMessageDialog(null, "Problem with listing user Folders files");
 			e.printStackTrace();
 		}
+		//JOptionPane.showMessageDialog(null, "modelDLM size is: "+ modelDLM.getSize());
 		for (File temp : usersFolders){
 			if(temp.isDirectory()){
 				str2.setLength(0);
 				str2.append(temp.getName().toString());
-				model.addElement(str2.toString());
+				modelDLM.addElement(str2.toString());
 			}
 		}
-	}
+		//
+	}// end of private void listFoldersOfUsers(File[] usersFolders, ...
+	
+	private void setUser(String str){
+		//JOptionPane.showMessageDialog(null, "in setUser");
+		if (modelRef != null){
+		modelRef.setCurrentUser(str);
+		}else{
+			JOptionPane.showMessageDialog(null, "Error: modelRef is null");
+		}
+		controller.updateView();
+		
+	}//end of private void setUser(String str){
 }
 

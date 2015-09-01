@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javaworkoutx.JavaWorkoutX_old;
+import javaworkoutxcontrollers.JavaWorkoutXController;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -41,6 +42,8 @@ public class JavaWorkoutXModel {
 	
 	String currentUser = null;
 	
+	JavaWorkoutXController controller = null;
+	
 
 	/**
 	 * 
@@ -63,8 +66,17 @@ public class JavaWorkoutXModel {
 	}
 	
 	// not needed ???????????
-	public void getCurrentUser(){
+	public String getCurrentUser(){
+		return currentUser;
 
+	}
+	
+	public void setCurrentUser(String str){
+		this.currentUser = str;
+	}
+	
+	public void setController(JavaWorkoutXController controller){
+		this.controller = controller;
 	}
 
 }

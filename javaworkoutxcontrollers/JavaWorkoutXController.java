@@ -33,16 +33,23 @@ public class JavaWorkoutXController {
 	}// end of constructor
 	
 	//constructor2
-	public JavaWorkoutXController(){};
+	//public JavaWorkoutXController(){};
 	
 	public void updateView(){
-		JOptionPane.showMessageDialog(null, "Marker for updating view");
+		//JOptionPane.showMessageDialog(null, "Marker for updating view");
+		
+		// TESTING !!!!!!!!!!!!!!!!!!!!!!!!!
+		view.updateText1("User: "+model.getCurrentUser());
 	}// end public void updateView(){
 	
 	public void getUser(){
-		JOptionPane.showMessageDialog(null, "Marker for controller getUser");
-		CurrentUserGetter curUserGetter = new CurrentUserGetter( model);
-		
+		//JOptionPane.showMessageDialog(null, "Marker for controller getUser");
+		if (this.model == null){
+			JOptionPane.showMessageDialog(null, "Error: model is null");
+		}
+		CurrentUserGetter curUserGetter = new CurrentUserGetter( model,this);
 	}
+	
+	
 
 }

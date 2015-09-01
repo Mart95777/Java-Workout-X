@@ -44,6 +44,9 @@ public class JavaWorkoutX extends JFrame{
 		
 		JavaWorkoutXController controller = new JavaWorkoutXController(model,view);
 		//controller.startApplication();
+		
+		model.setController(controller);
+		view.setController(controller);
 
 	}
 

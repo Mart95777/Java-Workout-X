@@ -56,6 +56,8 @@ public class JavaWorkoutXView extends JFrame {
 	JButton buttonNext  = new JButton(">");
 	JButton buttonOpenCode = new JButton("Open Code");
 	
+	JavaWorkoutXController controller = null;
+	
 	static File NOTEPAD_PP_PATH = null;
 	
 	static String WIN_PROGRAMFILES = System.getenv("programfiles");
@@ -64,7 +66,7 @@ public class JavaWorkoutXView extends JFrame {
 	//System.getenv("%programfiles% (x86)"); 
     static String FILE_SEPARATOR   = System.getProperty("file.separator");
     
-    private JavaWorkoutXController controller = new JavaWorkoutXController();
+    //private JavaWorkoutXController controller = new JavaWorkoutXController();
 
 	/**
 	 * CONSTRUCTOR
@@ -238,5 +240,13 @@ public class JavaWorkoutXView extends JFrame {
 			return null;
 		}
 		}//end of private void setNotepadPPPath(){
+	
+	public void setController(JavaWorkoutXController controller){
+		this.controller = controller;
+	}
+	
+	public void updateText1(String text){
+		jText1.setText(text);
+	}
 
 }
