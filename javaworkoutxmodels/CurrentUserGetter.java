@@ -7,6 +7,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 
 import javaworkoutx.JavaWorkoutX_old;
@@ -148,6 +151,14 @@ public class CurrentUserGetter extends JFrame {
 		
 		
 		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		MouseListener mouseListener = new MouseAdapter() {
+		    public void mouseClicked(MouseEvent e) {
+		    	if (e.getClickCount() == 2) {
+		    		userOK.doClick();
+		    	}
+		    }
+		};
+		userList.addMouseListener(mouseListener);
 		
 		addcomponent(mainPanel, jscrl, 0,1,1,6, GridBagConstraints.WEST, GridBagConstraints.NONE);
 		
