@@ -51,6 +51,10 @@ public class JavaWorkoutXController {
 		CurrentUserGetter curUserGetter = new CurrentUserGetter( model,this);
 	}
 	
+	public void loadDocument(String str){
+		model.loadDocument(str);
+	}
+	
 	
 
 }

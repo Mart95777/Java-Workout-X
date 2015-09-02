@@ -26,7 +26,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Document;
 
 /**
  * @author marcin
@@ -43,6 +47,8 @@ public class JavaWorkoutXModel {
 	String currentUser = null;
 	
 	JavaWorkoutXController controller = null;
+	
+	Document document = null;
 	
 
 	/**
@@ -85,6 +91,18 @@ public class JavaWorkoutXModel {
 		sb.append("\nTopic: ");
 		
 		return sb.toString();
+	}
+	
+	public void loadDocument(String str){
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		JOptionPane.showMessageDialog(null, "Inside loadDocument method");
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

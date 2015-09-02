@@ -148,6 +148,7 @@ public class CurrentUserGetter extends JFrame {
 		
 		
 		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
 		addcomponent(mainPanel, jscrl, 0,1,1,6, GridBagConstraints.WEST, GridBagConstraints.NONE);
 		
 		userCreate = new JButton("Create user");
@@ -228,6 +229,7 @@ public class CurrentUserGetter extends JFrame {
 		}else{
 			JOptionPane.showMessageDialog(null, "Error: modelRef is null");
 		}
+		controller.loadDocument(str);
 		controller.updateView();
 		
 	}//end of private void setUser(String str){
