@@ -78,5 +78,13 @@ public class JavaWorkoutXModel {
 	public void setController(JavaWorkoutXController controller){
 		this.controller = controller;
 	}
+	
+	public String jText1Set(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("User: "+this.getCurrentUser());
+		sb.append("\nTopic: ");
+		
+		return sb.toString();
+	}
 
 }

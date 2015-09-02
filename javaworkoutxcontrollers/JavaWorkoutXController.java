@@ -30,6 +30,7 @@ public class JavaWorkoutXController {
 		this.view = view;
 		
 		view.setVisible(true);
+		updateView();
 	}// end of constructor
 	
 	//constructor2
@@ -39,7 +40,7 @@ public class JavaWorkoutXController {
 		//JOptionPane.showMessageDialog(null, "Marker for updating view");
 		
 		// TESTING !!!!!!!!!!!!!!!!!!!!!!!!!
-		view.updateText1("User: "+model.getCurrentUser());
+		view.updateText1(model.jText1Set());
 	}// end public void updateView(){
 	
 	public void getUser(){
